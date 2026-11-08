@@ -1323,7 +1323,8 @@ table.compact-table td.col-actions .row-actions{justify-content:flex-end;}
                     <option value="৳">BDT – Bangladeshi Taka (৳)</option>
                   </select>
                 </div>
-                <div class="field"><label>Delivery Charge (৳)</label><input type="number" id="set-delivery"></div>
+                <div class="field"><label>Delivery Charge – Inside Dhaka (৳)</label><input type="number" min="0" id="set-delivery-inside"></div>
+                <div class="field"><label>Delivery Charge – Outside Dhaka (৳)</label><input type="number" min="0" id="set-delivery-outside"></div>
                 <div class="field full"><label>Tax (%)</label><input type="number" id="set-tax"></div>
               </div>
             </div>
@@ -1814,7 +1815,7 @@ function seedDemoData(){
     DataService.set('settings', {
       storeName:'Velora', storePhone:'', storeEmail:'',
       storeAddress:'', storeLogo:'',
-      currency:'৳', delivery:60, tax:0, theme:'light',
+      currency:'৳', delivery:60, deliveryInside:60, deliveryOutside:120, tax:0, theme:'light',
       bkashNumber:'', bkashType:'personal', advanceDeliveryEnabled:true,
       adminName:'Admin User', adminEmail:'admin@store.com'
     });
@@ -3287,7 +3288,8 @@ function renderSettings(){
   document.getElementById('set-store-email').value = s.storeEmail || '';
   document.getElementById('set-store-address').value = s.storeAddress || '';
   document.getElementById('set-currency').value = '৳';
-  document.getElementById('set-delivery').value = s.delivery || 0;
+  document.getElementById('set-delivery-inside').value = (s.deliveryInside !== undefined && s.deliveryInside !== null && s.deliveryInside !== '') ? s.deliveryInside : (s.delivery || 60);
+  document.getElementById('set-delivery-outside').value = (s.deliveryOutside !== undefined && s.deliveryOutside !== null && s.deliveryOutside !== '') ? s.deliveryOutside : 120;
   document.getElementById('set-tax').value = s.tax || 0;
   document.getElementById('set-bkash-number').value = s.bkashNumber || '';
   document.getElementById('set-bkash-type').value = s.bkashType || 'personal';
@@ -3389,7 +3391,9 @@ document.getElementById('save-settings-btn').addEventListener('click', ()=>{
     storeAddress: document.getElementById('set-store-address').value.trim(),
     storeLogo: settingsLogoData,
     currency: '৳',
-    delivery: parseFloat(document.getElementById('set-delivery').value) || 0,
+    deliveryInside: Math.max(0, parseFloat(document.getElementById('set-delivery-inside').value) || 0),
+    deliveryOutside: Math.max(0, parseFloat(document.getElementById('set-delivery-outside').value) || 0),
+    delivery: Math.max(0, parseFloat(document.getElementById('set-delivery-inside').value) || 0), /* legacy key = inside Dhaka */
     tax: parseFloat(document.getElementById('set-tax').value) || 0,
     bkashNumber: document.getElementById('set-bkash-number').value.trim(),
     bkashType: document.getElementById('set-bkash-type').value,

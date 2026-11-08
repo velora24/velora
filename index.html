@@ -1158,6 +1158,7 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
       <div class="checkout-card">
         <h3>Shipping & Billing Details</h3>
         <form id="checkout-form">
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"><label>Website<input type="text" id="chk-website" name="website" tabindex="-1" autocomplete="off"></label></div>
           <div class="form-grid">
             <div class="field full"><label>Full Name</label><input type="text" id="chk-name" required></div>
             <div class="field"><label>Phone Number</label><input type="tel" id="chk-phone" required></div>
@@ -1233,13 +1234,14 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
         <div class="summary-row"><span>Subtotal</span><span id="chk-subtotal"></span></div>
         <div class="summary-row" id="chk-discount-row" style="display:none;color:var(--success);"><span>Coupon Discount</span><span id="chk-discount"></span></div>
         <div class="summary-row" id="chk-fullpay-row" style="display:none;color:var(--success);"><span>Full Payment Discount</span><span id="chk-fullpay"></span></div>
-        <div class="summary-row"><span>Delivery Charge</span><span id="chk-delivery"></span></div>
+        <div class="summary-row"><span>Delivery Charge <small id="chk-delivery-zone" style="opacity:.7;font-weight:400;"></small></span><span id="chk-delivery"></span></div>
         <div class="summary-row"><span>Tax</span><span id="chk-tax"></span></div>
         <div class="summary-row total"><span>Total</span><span id="chk-total"></span></div>
         <div id="chk-cod-split" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);">
           <div class="summary-row"><span>Advance (via bKash)</span><span id="chk-advance-amt"></span></div>
           <div class="summary-row"><span>Due on Delivery (Cash)</span><span id="chk-due-amt"></span></div>
         </div>
+        <div id="chk-dup-notice" style="display:none;margin-top:14px;background:var(--warning-bg);border:1px solid #FDE68A;color:#92400E;border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;font-weight:600;line-height:1.5;"></div>
         <button class="btn btn-primary btn-block" id="place-order-btn" style="margin-top:16px;padding:12px;"><i class="fa-solid fa-check"></i> Place Order</button>
       </div>
     </div>
@@ -3020,7 +3022,23 @@ const StoreFront = (function(){
     document.getElementById('chk-summary-name').textContent = p.name + (cSummary ? ' (' + cSummary + ')' : '');
     document.getElementById('chk-summary-qty').textContent = 'Qty: ' + qty;
     updatePaymentPanel();
+    hideDupNotice();
+    placingOrder = false;
+    checkoutOpenedAt = Date.now();
     resetScroll();
+  }
+
+  /* Delivery charge by location: district "Dhaka" = inside Dhaka, everything else = outside.
+     Values come from Admin > Settings. Before a district is chosen, the inside-Dhaka rate is shown. */
+  function getDeliveryCharge(settings){
+    settings = settings || SettingsService.getSettings();
+    const num = (v, fb)=> (v === undefined || v === null || v === '' || isNaN(Number(v))) ? fb : Number(v);
+    const inside = num(settings.deliveryInside, num(settings.delivery, 60));
+    const outside = num(settings.deliveryOutside, 120);
+    const dEl = document.getElementById('chk-district');
+    const district = dEl ? dEl.value : '';
+    if(!district) return inside;
+    return district === 'Dhaka' ? inside : outside;
   }
 
   function updateCheckoutTotals(){
@@ -3035,7 +3053,7 @@ const StoreFront = (function(){
       ? Math.min(fp.value, discountedSubtotal)
       : discountedSubtotal * (fp.value / 100);
     const taxable = discountedSubtotal - fullPayDiscount;
-    const delivery = Number(settings.delivery || 0);
+    const delivery = getDeliveryCharge(settings);
     const taxAmt = taxable * (Number(settings.tax || 0) / 100);
     const total = taxable + delivery + taxAmt;
     document.getElementById('chk-subtotal').textContent = fmtMoney(subtotal);
@@ -3054,6 +3072,11 @@ const StoreFront = (function(){
       fullPayRow.style.display = 'none';
     }
     document.getElementById('chk-delivery').textContent = fmtMoney(delivery);
+    const zoneEl = document.getElementById('chk-delivery-zone');
+    if(zoneEl){
+      const dv = document.getElementById('chk-district').value;
+      zoneEl.textContent = !dv ? '' : (dv === 'Dhaka' ? '(Inside Dhaka)' : '(Outside Dhaka)');
+    }
     document.getElementById('chk-tax').textContent = fmtMoney(taxAmt);
     document.getElementById('chk-total').textContent = fmtMoney(total);
     return { subtotal: discountedSubtotal, rawSubtotal: subtotal, discount, fullPayDiscount, delivery, taxAmt, total };
@@ -3106,6 +3129,84 @@ const StoreFront = (function(){
     }catch(e){ console.warn('Order email not sent:', e); }
   }
 
+  /* ===== Spam / duplicate-order protection ===== */
+  const ORDER_GUARD = {
+    DUP_WINDOW_HOURS: 24,     /* same phone + same product: blocked for this long (0 = off, handy while testing) */
+    COOLDOWN_SECONDS: 120,    /* any 2 orders from one phone/device must be this far apart (0 = off) */
+    MAX_PER_HOUR: 3,          /* max orders per device per hour (0 = off) */
+    MIN_FILL_SECONDS: 3       /* orders sent faster than this after opening checkout are treated as bots */
+  };
+  const GUARD_KEY = 'velora_recent_orders';
+  let checkoutOpenedAt = 0;
+  let placingOrder = false;
+
+  function normPhone(v){
+    let d = String(v || '').replace(/[^\d]/g, '');
+    if(d.indexOf('880') === 0) d = d.slice(2);
+    if(d.length === 10 && d.charAt(0) === '1') d = '0' + d;
+    return d;
+  }
+  function isValidBdPhone(d){ return /^01[3-9]\d{8}$/.test(d); }
+
+  function guardLoad(){
+    try{
+      const keep = Date.now() - 48*3600*1000;
+      return (JSON.parse(localStorage.getItem(GUARD_KEY) || '[]') || []).filter(r=> r && r.t > keep);
+    }catch(e){ return []; }
+  }
+  function guardSave(rec){
+    try{
+      const list = guardLoad(); list.push(rec);
+      localStorage.setItem(GUARD_KEY, JSON.stringify(list.slice(-30)));
+    }catch(e){}
+  }
+  function hideDupNotice(){
+    const el = document.getElementById('chk-dup-notice');
+    if(el){ el.style.display = 'none'; el.innerHTML = ''; }
+  }
+  function showDupNotice(msg, trackingId){
+    const el = document.getElementById('chk-dup-notice');
+    if(!el){ showToast(msg, 'warning'); return; }
+    el.textContent = msg;
+    if(trackingId){
+      const a = document.createElement('a');
+      a.href = location.pathname + '?track=' + encodeURIComponent(trackingId);
+      a.textContent = ' Track order ' + trackingId + ' →';
+      a.style.cssText = 'display:block;margin-top:6px;color:var(--primary-dark);text-decoration:underline;';
+      el.appendChild(a);
+    }
+    el.style.display = 'block';
+    try{ el.scrollIntoView({ block:'center', behavior:'smooth' }); }catch(e){}
+  }
+
+  /* Checks done in this browser before anything is sent. Returns true if the order may continue. */
+  function clientGuardOk(phone, productId){
+    const now = Date.now();
+    const recent = guardLoad();
+    const G = ORDER_GUARD;
+    if(G.DUP_WINDOW_HOURS > 0){
+      const same = recent.find(r=> r.pid === productId && now - r.t < G.DUP_WINDOW_HOURS*3600*1000);
+      if(same){
+        showDupNotice('You have already ordered this product. We are processing your order, so a new one cannot be placed right now.', same.trk);
+        return false;
+      }
+    }
+    if(G.COOLDOWN_SECONDS > 0){
+      const last = recent.reduce((m,r)=> Math.max(m, r.t), 0);
+      if(last && now - last < G.COOLDOWN_SECONDS*1000){
+        showDupNotice('Your previous order was just placed. Please wait a couple of minutes before ordering again.');
+        return false;
+      }
+    }
+    if(G.MAX_PER_HOUR > 0){
+      if(recent.filter(r=> now - r.t < 3600*1000).length >= G.MAX_PER_HOUR){
+        showDupNotice('Too many orders from this device. Please try again later or contact us.');
+        return false;
+      }
+    }
+    return true;
+  }
+
   function placeOrder(){
     const name = document.getElementById('chk-name').value.trim();
     const phone = document.getElementById('chk-phone').value.trim();
@@ -3114,8 +3215,21 @@ const StoreFront = (function(){
     const district = document.getElementById('chk-district').value;
     const fullAddress = document.getElementById('chk-full-address').value.trim();
 
+    if(placingOrder) return;                                   /* ignore double taps */
+    hideDupNotice();
+    if((document.getElementById('chk-website').value || '').trim() !== ''){ return; }   /* honeypot: only bots fill it */
+    if(ORDER_GUARD.MIN_FILL_SECONDS > 0 && checkoutOpenedAt && Date.now() - checkoutOpenedAt < ORDER_GUARD.MIN_FILL_SECONDS*1000){
+      showToast('Please check your details and try again','warning');
+      return;
+    }
+
     if(!name || !phone || !thana || !district || !fullAddress){
       showToast('Please fill in all required delivery details','error');
+      return;
+    }
+    const phoneNorm = normPhone(phone);
+    if(!isValidBdPhone(phoneNorm)){
+      showToast('Please enter a valid mobile number (01XXXXXXXXX)','error');
       return;
     }
 
@@ -3143,6 +3257,9 @@ const StoreFront = (function(){
     const totals = updateCheckoutTotals();
     const p = currentProduct;
 
+    if(!clientGuardOk(phoneNorm, p.id)) return;
+    placingOrder = true;
+
     const btn = document.getElementById('place-order-btn');
     const original = btn.innerHTML;
     btn.innerHTML = '<span class="loading-spinner"></span> Placing order...';
@@ -3161,7 +3278,8 @@ const StoreFront = (function(){
         id: DataService.uid('ORD'),
         trackingId,
         customer: name,
-        phone,
+        phone: phoneNorm,
+        productId: p.id,
         product: p.name + (variantSummaryText() ? ' (' + variantSummaryText() + ')' : ''),
         variantSku: variantSummaryText(),
         sizes: selectedSizes.slice(),
@@ -3177,18 +3295,33 @@ const StoreFront = (function(){
         couponDiscount: appliedCoupon ? Math.round(totals.discount*100)/100 : 0,
         date: Date.now(),
         status: 'pending',
+        deliveryCharge: Math.round((totals.delivery||0)*100)/100,
         deliveryAddress: fullAddress + ', ' + thana + ', ' + district,
         thana, district, email
       };
       const toList = (v)=> Array.isArray(v) ? v.slice() : (v ? Object.values(v) : []);
+      let dupReason = null;
       const saveOrder = DataService.transact('orders', (cur)=>{
+        dupReason = null;
         const list = toList(cur);
+        const now = Date.now();
+        const G = ORDER_GUARD;
+        for(let i = 0; i < list.length; i++){
+          const x = list[i];
+          if(!x || normPhone(x.phone) !== phoneNorm) continue;
+          const age = now - (Number(x.date) || 0);
+          if(G.COOLDOWN_SECONDS > 0 && age < G.COOLDOWN_SECONDS*1000){ dupReason = 'cooldown'; return; }
+          if(G.DUP_WINDOW_HOURS > 0 && age < G.DUP_WINDOW_HOURS*3600*1000 && x.status !== 'cancelled' &&
+             (x.productId ? x.productId === p.id : String(x.product || '').indexOf(p.name) === 0)){
+            dupReason = 'same'; return;
+          }
+        }
         list.unshift(order);
         return list;
       });
-      const saveCustomer = DataService.transact('customers', (cur)=>{
+      const saveCustomer = ()=> DataService.transact('customers', (cur)=>{
         const customers = toList(cur);
-        const existing = customers.find(c=> c.phone === phone || (email && c.email === email));
+        const existing = customers.find(c=> c.phone === phoneNorm || normPhone(c.phone) === phoneNorm || (email && c.email === email));
         if(existing){
           existing.orders = (existing.orders || 0) + 1;
           existing.totalSpent = Math.round(((existing.totalSpent || 0) + order.total) * 100)/100;
@@ -3197,20 +3330,23 @@ const StoreFront = (function(){
         } else {
           customers.unshift({
             id: DataService.uid('CUS'),
-            name, phone, email: email || (name.toLowerCase().replace(/\s+/g,'.')+'@guest.com'),
+            name, phone: phoneNorm, email: email || (name.toLowerCase().replace(/\s+/g,'.')+'@guest.com'),
             orders: 1, totalSpent: order.total, lastOrder: Date.now(), status:'active'
           });
         }
         return customers;
       }).catch((err)=> console.warn('Customer record not updated:', err));
       const pIdx = ProductService.getProducts().findIndex(x=> x.id === p.id);
-      const saveStock = pIdx < 0 ? Promise.resolve() : FirebaseDB.ref('products/' + pIdx).transaction((cur)=>{
+      const saveStock = ()=> pIdx < 0 ? Promise.resolve() : FirebaseDB.ref('products/' + pIdx).transaction((cur)=>{
         if(!cur || cur.id !== p.id) return; // product moved/removed: abort
         return Object.assign({}, cur, { stock: Math.max(0, (Number(cur.stock) || 0) - qty) });
       }).catch((err)=> console.warn('Stock not updated:', err));
 
-      Promise.all([saveOrder, saveCustomer, saveStock]).then(()=>{
+      /* order first; customer + stock are only touched if the order was really accepted */
+      saveOrder.then(()=> Promise.all([saveCustomer(), saveStock()])).then(()=>{
         notifyOwnerByEmail(order);   /* fire-and-forget: never blocks or breaks the order */
+        guardSave({ t: Date.now(), pid: p.id, phone: phoneNorm, trk: trackingId });
+        placingOrder = false;
         btn.innerHTML = original;
         btn.disabled = false;
         document.getElementById('success-tracking-id').textContent = trackingId;
@@ -3219,9 +3355,16 @@ const StoreFront = (function(){
         document.getElementById('success-amount-text').textContent = fmtMoney(order.total);
         openModal('order-success-modal-overlay');
       }).catch((err)=>{
-        console.error('Order failed:', err);
+        placingOrder = false;
         btn.innerHTML = original;
         btn.disabled = false;
+        if(dupReason){
+          showDupNotice(dupReason === 'cooldown'
+            ? 'An order from this phone number was just placed. Please wait a couple of minutes before ordering again.'
+            : 'An order for this product from this phone number is already being processed. Please contact us if you need to change it.');
+          return;
+        }
+        console.error('Order failed:', err);
         showToast('Could not place your order. Please check your connection and try again.','error');
       });
     }
@@ -3258,6 +3401,7 @@ const StoreFront = (function(){
     document.getElementById('place-order-btn').addEventListener('click', placeOrder);
     document.getElementById('chk-district').addEventListener('change', function(){
       populateUpazilas(this.value);
+      updatePaymentPanel();   /* recalculates delivery charge + totals + advance amount */
     });
     document.getElementById('chk-apply-coupon-btn').addEventListener('click', applyCoupon);
     document.addEventListener('click', (e)=>{
@@ -3345,6 +3489,13 @@ const StoreFront = (function(){
     'Pay on delivery':'ডেলিভারিতে দেয়','Please enter your Tracking ID':'অনুগ্রহ করে ট্র্যাকিং আইডি দিন',
     'Please select a size for every item':'প্রতিটি পণ্যের সাইজ বাছাই করুন','Coupon applied successfully':'কুপন সফলভাবে প্রয়োগ হয়েছে',
     'Please fill in all required delivery details':'ডেলিভারির সব প্রয়োজনীয় তথ্য পূরণ করুন',
+    'Please enter a valid mobile number (01XXXXXXXXX)':'সঠিক মোবাইল নম্বর দিন (01XXXXXXXXX)',
+    'Please check your details and try again':'অনুগ্রহ করে তথ্য দেখে আবার চেষ্টা করুন',
+    'You have already ordered this product. We are processing your order, so a new one cannot be placed right now.':'আপনি এই পণ্যটি আগেই অর্ডার করেছেন। আপনার অর্ডার প্রসেস হচ্ছে, তাই এখন নতুন অর্ডার করা যাবে না।',
+    'Your previous order was just placed. Please wait a couple of minutes before ordering again.':'আপনার আগের অর্ডার এইমাত্র হয়েছে। আবার অর্ডার করতে কয়েক মিনিট অপেক্ষা করুন।',
+    'Too many orders from this device. Please try again later or contact us.':'এই ডিভাইস থেকে অনেক বেশি অর্ডার হয়েছে। পরে চেষ্টা করুন বা আমাদের সাথে যোগাযোগ করুন।',
+    'An order from this phone number was just placed. Please wait a couple of minutes before ordering again.':'এই ফোন নম্বর থেকে এইমাত্র একটি অর্ডার হয়েছে। আবার অর্ডার করতে কয়েক মিনিট অপেক্ষা করুন।',
+    'An order for this product from this phone number is already being processed. Please contact us if you need to change it.':'এই ফোন নম্বর থেকে এই পণ্যের একটি অর্ডার ইতিমধ্যে প্রসেস হচ্ছে। পরিবর্তন করতে হলে আমাদের সাথে যোগাযোগ করুন।',
     'Please select a design for every item before placing your order':'অর্ডারের আগে প্রতিটি পণ্যের ডিজাইন বাছাই করুন',
     'Please select a size for every item before placing your order':'অর্ডারের আগে প্রতিটি পণ্যের সাইজ বাছাই করুন',
     'Could not place your order. Please check your connection and try again.':'অর্ডার করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।',
