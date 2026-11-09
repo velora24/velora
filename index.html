@@ -1039,6 +1039,167 @@ body{font-family:'Inter','Hind Siliguri','Noto Sans Bengali',-apple-system,Blink
   .store-home-card .h-body{padding:8px 8px 10px;}
   .pd-price{font-size:22px;}
 }
+/* ===== CART ===== */
+.cart-item{display:flex;gap:14px;align-items:center;padding:4px 0 16px;}
+.cart-item img,.cart-item .ph{width:84px;height:84px;border-radius:12px;object-fit:cover;background:var(--bg);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#CBD5E1;font-size:24px;}
+.cart-item-info{flex:1;min-width:0;}
+.cart-item-name{font-weight:700;font-size:14.5px;overflow-wrap:anywhere;}
+.cart-item-unit{font-size:12.5px;color:var(--text-secondary);margin:2px 0 10px;}
+.cart-item-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.cart-item-line{margin-left:auto;font-weight:800;font-size:15px;}
+.cart-remove{background:none;border:none;color:var(--danger);font-size:12.5px;font-weight:600;padding:6px 2px;}
+.cart-remove:hover{text-decoration:underline;}
+.cart-note{font-size:12px;color:var(--text-secondary);background:var(--light-blue);border-radius:var(--radius-sm);padding:9px 12px;margin-top:4px;}
+.cart-steps{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:16px;flex-wrap:wrap;}
+.cart-steps .st{display:flex;align-items:center;gap:6px;}
+.cart-steps .st b{width:20px;height:20px;border-radius:50%;background:var(--border);color:var(--text-secondary);display:inline-flex;align-items:center;justify-content:center;font-size:11px;}
+.cart-steps .st.on{color:var(--primary);}
+.cart-steps .st.on b{background:var(--primary);color:#fff;}
+.cart-steps .sep{color:var(--border);}
+/* ===== CART v2 (multi-product) ===== */
+.top-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.cart-nav-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:38px;border:1px solid var(--border);border-radius:999px;background:var(--white);color:var(--primary-dark);font-size:15px;flex-shrink:0;}
+.cart-nav-btn:hover{background:var(--light-blue);}
+.cart-badge{position:absolute;top:-6px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--white);line-height:1;}
+.pd-btn-row{display:flex;gap:10px;}
+.pd-btn-row .btn{flex:1;width:auto;padding:13px 10px;font-size:15px;}
+.pd-btn-row .pd-cart-btn{border:1.5px solid var(--primary);color:var(--primary-dark);background:var(--white);}
+.pd-btn-row .pd-cart-btn:hover{background:var(--light-blue);}
+.pd-btn-row .btn[disabled]{opacity:.5;cursor:not-allowed;}
+@media(max-width:760px){
+  .pd-btn-row{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:30;}
+  .pd-btn-row .pd-buy-btn{position:static;box-shadow:none;}
+  .pd-btn-row .btn{padding:14px 8px;font-size:15px;box-shadow:0 8px 24px rgba(37,99,235,.25);}
+}
+.cart-line{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);}
+.cart-line:first-of-type{padding-top:4px;}
+.cart-line:last-child{border-bottom:none;padding-bottom:4px;}
+.cl-img{width:84px;height:84px;border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#CBD5E1;font-size:24px;}
+.cl-img img{width:100%;height:100%;object-fit:cover;}
+.cl-info{flex:1;min-width:0;}
+.cl-name{display:block;font-weight:700;font-size:14.5px;overflow-wrap:anywhere;}
+.cl-unit{font-size:12.5px;color:var(--text-secondary);margin:2px 0 8px;}
+.cl-opts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.opt-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px 3px 3px;border:1px solid var(--border);border-radius:999px;background:var(--bg);font-size:12px;}
+.opt-chip img{width:22px;height:22px;border-radius:50%;object-fit:cover;}
+.opt-chip b{font-weight:700;}
+.opt-chip i{font-style:normal;color:var(--text-secondary);font-weight:600;}
+.opt-chip:not(:has(img)){padding-left:9px;}
+.cl-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.cl-total{margin-left:auto;font-weight:800;font-size:15px;}
+.cart-remove{background:none;border:none;color:var(--danger);font-size:12.5px;font-weight:600;padding:6px 2px;}
+.cart-remove:hover{text-decoration:underline;}
+.cart-note{font-size:12px;color:var(--text-secondary);background:var(--light-blue);border-radius:var(--radius-sm);padding:9px 12px;margin-top:4px;}
+#chk-summary-items .summary-product:last-child{margin-bottom:16px;}
+@media(max-width:420px){.cl-img{width:68px;height:68px;}}
+/* ===== MOBILE-FIRST ORDER UX ===== */
+.checkout-card .field input{padding:12px 14px;}
+.field-error input,.field-error textarea,.field-error .combo-input{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(220,38,38,.12)!important;}
+.field-error>label{color:var(--danger);}
+.sticky-bar{display:none;}
+.cart-sheet{position:fixed;z-index:95;left:50%;bottom:20px;width:min(380px,calc(100% - 24px));transform:translate(-50%,140%);visibility:hidden;opacity:0;transition:transform .25s ease,opacity .2s ease,visibility .25s;background:var(--white);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 40px rgba(15,23,42,.22);padding:14px;}
+.cart-sheet.show{transform:translate(-50%,0);visibility:visible;opacity:1;}
+.cs-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.cs-ok{width:34px;height:34px;border-radius:50%;background:var(--success-bg);color:var(--success);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cs-txt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3;}
+.cs-txt b{font-size:14.5px;}
+.cs-txt small{font-size:12.5px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cs-close{background:none;border:none;font-size:16px;color:var(--text-secondary);width:36px;height:36px;border-radius:50%;}
+.cs-btns{display:flex;gap:10px;}
+.cs-btns .btn{flex:1;padding:13px 8px;font-size:14px;border-radius:12px;}
+@media(max-width:760px){
+  #store-cart-view,#store-checkout-view{padding-bottom:calc(104px + env(safe-area-inset-bottom));}
+  .sticky-bar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;gap:14px;align-items:center;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:var(--white);border-top:1px solid var(--border);box-shadow:0 -6px 20px rgba(15,23,42,.08);}
+  .sb-total{display:flex;flex-direction:column;line-height:1.2;min-width:0;}
+  .sb-total small{font-size:11.5px;color:var(--text-secondary);font-weight:600;}
+  .sb-total b{font-size:18px;font-weight:800;white-space:nowrap;}
+  .sticky-bar .btn{flex:1;padding:15px 10px;font-size:15.5px;border-radius:12px;}
+  #cart-checkout-btn,#place-order-btn{display:none;}
+  .checkout-card .field input,.checkout-card .field textarea,.checkout-card .field select,.checkout-card .field .combo .combo-input{font-size:16px;min-height:48px;}
+  #cart-coupon-input,#chk-coupon-input{font-size:16px!important;min-height:46px;}
+  #cart-apply-coupon-btn,#chk-apply-coupon-btn{min-height:46px;padding:0 16px!important;font-size:14px!important;}
+  .payment-options .payment-opt{min-height:64px;}
+  .pd-btn-row{background:var(--white);padding:10px;border-radius:16px;border:1px solid var(--border);box-shadow:0 -4px 20px rgba(15,23,42,.10);}
+  .pd-btn-row .btn{box-shadow:none;padding:15px 8px;border-radius:12px;}
+  .cart-sheet{bottom:calc(12px + env(safe-area-inset-bottom));}
+  .cart-nav-btn{width:44px;height:42px;}
+}
+/* ===== PRO STOREFRONT THEME ===== */
+:root{--ink:#0B1220;--card-shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.06);}
+#storefront-screen{background:#F3F6FB;}
+.storefront-wrap{max-width:1180px;}
+.btn{border-radius:12px;}
+.btn-primary{background:linear-gradient(180deg,#3B82F6,#2563EB);box-shadow:0 4px 12px rgba(37,99,235,.25);}
+.promo-strip{background:var(--ink);color:#E2E8F0;font-size:12px;font-weight:600;display:flex;justify-content:center;gap:26px;padding:8px 12px;flex-wrap:wrap;}
+.promo-strip i{color:#FBBF24;margin-right:6px;}
+.store-topbar{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(15,23,42,.04);padding:10px max(12px,calc((100% - 1180px)/2 + 12px));gap:18px;align-items:center;}
+.store-search{flex:1;max-width:560px;position:relative;margin:0;}
+.store-search i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-secondary);pointer-events:none;}
+.store-search input{width:100%;height:44px;border:1.5px solid var(--border);border-radius:999px;background:#F8FAFC;padding:0 16px 0 42px;font-size:14px;outline:none;transition:.15s;}
+.store-search input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.10);}
+.hero{background:linear-gradient(120deg,#1E3A8A 0%,#2563EB 55%,#38BDF8 100%);border-radius:20px;color:#fff;padding:36px;margin-bottom:20px;position:relative;overflow:hidden;}
+.hero:after{content:"";position:absolute;right:-70px;top:-70px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.12);}
+.hero h1{font-size:30px;font-weight:800;line-height:1.2;margin-bottom:8px;max-width:520px;position:relative;}
+.hero p{opacity:.92;font-size:14px;margin-bottom:16px;max-width:460px;position:relative;}
+.hero-tags{display:flex;gap:8px;flex-wrap:wrap;position:relative;}
+.hero-tags span{background:rgba(255,255,255,.16);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;}
+.cat-row{display:flex;gap:8px;overflow-x:auto;padding:2px 0 16px;scrollbar-width:none;}
+.cat-row::-webkit-scrollbar{display:none;}
+.cat-chip{flex-shrink:0;padding:9px 18px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--text);}
+.cat-chip.on{background:var(--primary);border-color:var(--primary);color:#fff;}
+.store-home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
+.store-home-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--card-shadow);transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column;}
+.store-home-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(15,23,42,.12);}
+.h-img{position:relative;aspect-ratio:1/1;background:#F1F5F9;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#CBD5E1;font-size:28px;}
+.h-img img{width:100%;height:100%;object-fit:cover;}
+.h-badge{position:absolute;top:10px;left:10px;background:var(--danger);color:#fff;font-size:11.5px;font-weight:800;padding:4px 8px;border-radius:8px;}
+.h-soldout{position:absolute;right:10px;bottom:10px;background:rgba(15,23,42,.82);color:#fff;font-size:11px;font-weight:600;padding:4px 8px;border-radius:8px;}
+.h-body{padding:12px 14px 14px;}
+.h-cat{font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;}
+.h-name{font-weight:700;font-size:14px;line-height:1.35;min-height:38px;margin:2px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.h-meta{font-size:12px;color:var(--text-secondary);margin:2px 0 6px;min-height:16px;}
+.h-stars{color:#F59E0B;font-weight:700;}
+.h-price{font-size:17px;font-weight:800;color:var(--primary-dark);}
+.h-old{margin-left:6px;font-size:12.5px;font-weight:500;color:var(--text-secondary);text-decoration:line-through;}
+.product-hero{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:var(--card-shadow);padding:26px;gap:36px;}
+.product-image-box{border-radius:16px;background:#F8FAFC;border:1px solid var(--border);}
+.pd-title{font-size:26px;font-weight:800;letter-spacing:-.01em;}
+.pd-price-row{background:#F8FAFC;border-radius:14px;padding:12px 16px;margin:12px 0;}
+.pd-price{font-size:28px;font-weight:800;color:var(--primary-dark);}
+.pd-discount-tag{background:var(--danger);color:#fff;border-radius:8px;padding:3px 9px;font-weight:800;}
+.pd-meta-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.pd-meta-item{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:#F8FAFC;border:1px solid var(--border);border-radius:12px;padding:10px 6px;font-size:12px;font-weight:600;}
+.pd-meta-item i{color:var(--primary);font-size:16px;}
+.suggested-card{background:#fff;border-radius:14px;box-shadow:var(--card-shadow);overflow:hidden;}
+.checkout-card,.summary-card{border-radius:18px;box-shadow:var(--card-shadow);border-color:#E8EEF6;}
+.summary-row.total{font-size:17px;}
+.cart-steps{justify-content:center;gap:12px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px;}
+.cart-steps .sep{width:36px;height:2px;background:var(--border);font-size:0;overflow:hidden;}
+.store-footer{background:var(--ink);color:#CBD5E1;padding:36px max(16px,calc((100% - 1180px)/2 + 20px)) 22px;margin-top:40px;text-align:left;}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:28px;}
+.ft-brand{font-size:18px;font-weight:800;color:#fff;margin-bottom:8px;}
+.ft-grid p{font-size:13px;max-width:320px;}
+.ft-grid h4{color:#fff;font-size:13px;margin-bottom:10px;}
+.ft-grid a,.ft-grid .ft-i{display:block;font-size:13px;margin-bottom:6px;color:#CBD5E1;}
+.ft-grid a:hover{color:#fff;}
+.ft-copy{border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:14px;font-size:12px;color:#94A3B8;}
+@media(max-width:760px){
+  .store-topbar{flex-wrap:wrap;gap:10px;padding:10px 12px;}
+  .store-search{order:3;flex-basis:100%;max-width:none;}
+  .store-search input{font-size:16px;}
+  .hero{padding:22px 20px;border-radius:16px;}
+  .hero h1{font-size:22px;}
+  .store-home-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .h-body{padding:10px 11px 12px;}
+  .product-hero{padding:14px;gap:18px;border-radius:16px;}
+  .pd-title{font-size:21px;}
+  .pd-price{font-size:24px;}
+  .promo-strip{gap:14px;font-size:11px;}
+  .promo-strip span:nth-child(3){display:none;}
+  .ft-grid{grid-template-columns:1fr 1fr;}
+  .ft-grid>div:first-child{grid-column:1/-1;}
+  .store-footer{padding-bottom:96px;}
+}
 </style>
 </head>
 <body>
@@ -1086,16 +1247,23 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
 
 <!-- ============================== PUBLIC STOREFRONT ============================== -->
 <div id="storefront-screen">
+  <div class="promo-strip"><span><i class="fa-solid fa-truck-fast"></i>Fast delivery</span><span><i class="fa-solid fa-hand-holding-dollar"></i>Cash on Delivery</span><span><i class="fa-solid fa-rotate-left"></i>Easy returns</span></div>
   <div class="store-topbar">
     <a href="index.html" id="store-logo-link" class="store-brand-link" aria-label="Go to home page">
       <div class="logo-icon"><img src="logo.png" alt="velora"></div>
       <div class="brand-text" id="store-brand-name">Velora</div>
     </a>
-    <a href="?track" id="store-track-link" class="track-nav-btn"><i class="fa-solid fa-location-dot"></i><span>Track order</span></a>
+    <form class="store-search" id="store-search-form" role="search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="store-search" placeholder="Search products" autocomplete="off" enterkeyhint="search" aria-label="Search products"></form>
+    <div class="top-right">
+      <a href="?track" id="store-track-link" class="track-nav-btn"><i class="fa-solid fa-location-dot"></i><span>Track order</span></a>
+      <button type="button" id="store-cart-btn" class="cart-nav-btn" aria-label="Cart"><i class="fa-solid fa-cart-shopping"></i><span class="cart-badge" id="cart-badge" style="display:none;">0</span></button>
+    </div>
   </div>
 
   <!-- Store home (product list) -->
   <div class="storefront-wrap" id="store-home-view" style="display:none;">
+    <div class="hero"><h1>Shop Smart. Order Easily.</h1><p>Pick your favourite products and get them delivered to your door.</p><div class="hero-tags"><span>Cash on Delivery</span><span>Fast delivery</span><span>Secure checkout</span></div></div>
+    <div id="store-cats" class="cat-row"></div>
     <h2 style="font-size:20px;font-weight:800;margin-bottom:6px;" id="store-home-title">Our Products</h2>
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;">Pick a product to order.</p>
     <div id="store-home-grid" class="store-home-grid"></div>
@@ -1140,7 +1308,10 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
           <label id="store-variant-label" style="font-size:13px;font-weight:600;display:block;margin-bottom:10px;">Select Design &amp; Size <span style="font-weight:500;color:var(--text-secondary);">(one for each item)</span></label>
           <div id="store-variant-items"></div>
         </div>
-        <button class="btn btn-primary pd-buy-btn" id="store-buy-now-btn"><i class="fa-solid fa-bolt"></i> Buy Now</button>
+        <div class="pd-btn-row">
+          <button type="button" class="btn pd-cart-btn" id="store-add-cart-btn"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>
+          <button type="button" class="btn btn-primary pd-buy-btn" id="store-buy-now-btn"><i class="fa-solid fa-bolt"></i> Buy Now</button>
+        </div>
         <div id="store-outofstock-note" class="pd-outofstock-note" style="display:none;">This product is currently out of stock.</div>
       </div>
     </div>
@@ -1151,18 +1322,50 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
     </div>
   </div>
 
+  <!-- Cart view -->
+  <div class="storefront-wrap" id="store-cart-view" style="display:none;">
+    <div class="store-breadcrumb"><a href="#" id="cart-back-to-product" style="color:var(--primary);font-weight:600;">← Continue Shopping</a></div>
+    <div class="cart-steps"><span class="st on"><b>1</b> Cart</span><span class="sep">—</span><span class="st"><b>2</b> Billing</span><span class="sep">—</span><span class="st"><b>3</b> Place Order</span></div>
+    <div id="cart-empty" class="empty-state" style="display:none;"><i class="fa-solid fa-cart-shopping"></i><p>Cart is empty</p><span>Add a product to continue.</span><button type="button" class="btn btn-primary" id="cart-empty-btn" style="margin-top:14px;">Continue Shopping</button></div>
+    <div class="checkout-grid" id="cart-grid">
+      <div class="checkout-card">
+        <h3><i class="fa-solid fa-cart-shopping"></i> Your Cart <span id="cart-count" style="color:var(--text-secondary);font-weight:600;"></span></h3>
+        <div id="cart-lines"></div>
+      </div>
+      <div class="summary-card">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;">Order Summary</h3>
+        <div style="display:flex;gap:8px;margin-bottom:16px;min-width:0;">
+          <input type="text" id="cart-coupon-input" placeholder="Coupon code" style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);text-transform:uppercase;font-size:13px;">
+          <button type="button" class="btn btn-secondary" id="cart-apply-coupon-btn" style="padding:9px 14px;font-size:12.5px;flex-shrink:0;">Apply</button>
+        </div>
+        <div id="cart-coupon-message" style="display:none;font-size:12px;font-weight:600;margin:-8px 0 12px;"></div>
+        <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal"></span></div>
+        <div class="summary-row" id="cart-discount-row" style="display:none;color:var(--success);"><span>Coupon Discount</span><span id="cart-discount"></span></div>
+        <div class="summary-row"><span>Tax</span><span id="cart-tax"></span></div>
+        <div class="summary-row total"><span>Estimated Total</span><span id="cart-total"></span></div>
+        <div class="cart-note"><i class="fa-solid fa-truck"></i> Delivery charge is added at checkout based on your district.</div>
+        <button class="btn btn-primary btn-block" id="cart-checkout-btn" style="margin-top:16px;padding:12px;"><i class="fa-solid fa-lock"></i> Proceed to Checkout</button>
+      </div>
+    </div>
+    <div class="sticky-bar" id="cart-sticky">
+      <div class="sb-total"><small>Estimated Total</small><b id="cart-sticky-total"></b></div>
+      <button type="button" class="btn btn-primary" id="cart-sticky-btn"><i class="fa-solid fa-lock"></i> Proceed to Checkout</button>
+    </div>
+  </div>
+
   <!-- Checkout / billing view -->
   <div class="storefront-wrap" id="store-checkout-view" style="display:none;">
-    <div class="store-breadcrumb"><a href="#" id="store-back-to-product" style="color:var(--primary);font-weight:600;">← Back to product</a></div>
+    <div class="store-breadcrumb"><a href="#" id="store-back-to-product" style="color:var(--primary);font-weight:600;">← Back to cart</a></div>
+    <div class="cart-steps"><span class="st"><b>1</b> Cart</span><span class="sep">—</span><span class="st on"><b>2</b> Billing</span><span class="sep">—</span><span class="st on"><b>3</b> Place Order</span></div>
     <div class="checkout-grid">
       <div class="checkout-card">
         <h3>Shipping & Billing Details</h3>
         <form id="checkout-form">
           <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;"><label>Website<input type="text" id="chk-website" name="website" tabindex="-1" autocomplete="off"></label></div>
           <div class="form-grid">
-            <div class="field full"><label>Full Name</label><input type="text" id="chk-name" required></div>
-            <div class="field"><label>Phone Number</label><input type="tel" id="chk-phone" required></div>
-            <div class="field"><label>Email (Optional)</label><input type="email" id="chk-email"></div>
+            <div class="field full"><label>Full Name</label><input type="text" id="chk-name" required autocomplete="name" autocapitalize="words" enterkeyhint="next"></div>
+            <div class="field"><label>Phone Number</label><input type="tel" id="chk-phone" required inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="01XXXXXXXXX" enterkeyhint="next"></div>
+            <div class="field"><label>Email (Optional)</label><input type="email" id="chk-email" inputmode="email" autocomplete="email" autocapitalize="off"></div>
             <div class="field"><label>District</label>
               <select id="chk-district" required>
                 <option value="">Select District</option>
@@ -1173,7 +1376,7 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
                 <option value="">Select District First</option>
               </select>
             </div>
-            <div class="field full"><label>Full Address (House, Road, Village)</label><textarea id="chk-full-address" rows="2" required></textarea></div>
+            <div class="field full"><label>Full Address (House, Road, Village)</label><textarea id="chk-full-address" rows="2" required autocomplete="street-address" enterkeyhint="done"></textarea></div>
           </div>
           <div class="field" style="margin-top:6px;">
             <label>Payment Method</label>
@@ -1209,21 +1412,15 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
             </div>
             <div class="bkash-save-note" id="bkash-save-note" style="display:none;"></div>
             <div class="form-grid">
-              <div class="field"><label>Your bKash Number</label><input type="tel" id="chk-bkash-number" placeholder="01XXXXXXXXX"></div>
-              <div class="field"><label>Transaction ID</label><input type="text" id="chk-bkash-txn" placeholder="e.g. 9G7H2K4L1M"></div>
+              <div class="field"><label>Your bKash Number</label><input type="tel" id="chk-bkash-number" placeholder="01XXXXXXXXX" inputmode="numeric" autocomplete="off" maxlength="14"></div>
+              <div class="field"><label>Transaction ID</label><input type="text" id="chk-bkash-txn" placeholder="e.g. 9G7H2K4L1M" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
             </div>
           </div>
         </form>
       </div>
       <div class="summary-card">
-        <div class="summary-product">
-          <img id="chk-summary-img" style="display:none;">
-          <div class="ph" id="chk-summary-ph"><i class="fa-solid fa-image"></i></div>
-          <div>
-            <div class="cell-main" id="chk-summary-name"></div>
-            <div class="cell-sub" id="chk-summary-qty"></div>
-          </div>
-        </div>
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;">Order Summary</h3>
+        <div id="chk-summary-items"></div>
 
         <div style="display:flex;gap:8px;margin-bottom:16px;min-width:0;">
           <input type="text" id="chk-coupon-input" placeholder="Coupon code" style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);text-transform:uppercase;font-size:13px;">
@@ -1245,6 +1442,10 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
         <button class="btn btn-primary btn-block" id="place-order-btn" style="margin-top:16px;padding:12px;"><i class="fa-solid fa-check"></i> Place Order</button>
       </div>
     </div>
+    <div class="sticky-bar" id="chk-sticky">
+      <div class="sb-total"><small>Total</small><b id="chk-sticky-total"></b></div>
+      <button type="button" class="btn btn-primary" id="chk-sticky-btn"><i class="fa-solid fa-check"></i> Place Order</button>
+    </div>
   </div>
 
   <!-- Live order tracking -->
@@ -1259,7 +1460,12 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
   </div>
 
   <footer class="store-footer">
-    <span id="store-footer-brand">Velora</span> &copy; <span id="store-footer-year"></span>
+    <div class="ft-grid">
+      <div><div class="ft-brand" id="store-footer-brand2">Velora</div><p>Quality products, easy ordering.</p></div>
+      <div><h4>Quick Links</h4><a href="index.html">Home</a><a href="?track">Track order</a></div>
+      <div><h4>Payment</h4><span class="ft-i">Cash on Delivery</span><span class="ft-i">bKash</span></div>
+    </div>
+    <div class="ft-copy"><span id="store-footer-brand">Velora</span> &copy; <span id="store-footer-year"></span></div>
   </footer>
 </div>
 
@@ -1295,6 +1501,18 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
 </div>
 
 <div id="toast-container"></div>
+
+<div class="cart-sheet" id="cart-sheet" role="status" aria-live="polite">
+  <div class="cs-head">
+    <span class="cs-ok"><i class="fa-solid fa-check"></i></span>
+    <div class="cs-txt"><b>Added to cart</b><small id="cart-sheet-name"></small></div>
+    <button type="button" class="cs-close" id="cart-sheet-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="cs-btns">
+    <button type="button" class="btn btn-secondary" id="cart-sheet-continue">Continue Shopping</button>
+    <button type="button" class="btn btn-primary" id="cart-sheet-view"><i class="fa-solid fa-cart-shopping"></i> View Cart</button>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
@@ -2567,6 +2785,7 @@ const StoreFront = (function(){
   let selectedVariants = []; // one entry per quantity unit
   let selectedSizes = [];    // one entry per quantity unit
   let appliedCoupon = null; // { code, discount }
+  let couponNote = null;    // { text, color } last coupon message, shown in cart and checkout
 
   function getParams(){
     return new URLSearchParams(window.location.search);
@@ -2651,7 +2870,6 @@ const StoreFront = (function(){
   }
 
   function renderVariantItems(){
-    const wrap = document.getElementById('store-variant-items');
     const variants = hasVariants() ? currentProduct.variants : [];
     const sizes = hasSizes() ? currentProduct.sizes : [];
     let html = '';
@@ -2677,25 +2895,27 @@ const StoreFront = (function(){
           </div>` : ''}
       </div>`;
     }
-    wrap.innerHTML = html;
-
-    wrap.querySelectorAll('.design-thumb').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        const itemIdx = parseInt(btn.dataset.item,10);
-        const vIdx = parseInt(btn.dataset.variant,10);
-        selectedVariants[itemIdx] = currentProduct.variants[vIdx];
-        renderVariantItems();
-        document.getElementById('store-product-image-box').innerHTML = `<img src="${currentProduct.variants[vIdx].image}" decoding="async">`;
+    ['store-variant-items'].forEach(function(wid){
+      const box = document.getElementById(wid);
+      if(!box) return;
+      box.innerHTML = html;
+      box.querySelectorAll('.design-thumb').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          const itemIdx = parseInt(btn.dataset.item,10);
+          const vIdx = parseInt(btn.dataset.variant,10);
+          selectedVariants[itemIdx] = currentProduct.variants[vIdx];
+          renderVariantItems();
+          document.getElementById('store-product-image-box').innerHTML = `<img src="${currentProduct.variants[vIdx].image}" decoding="async">`;
+        });
       });
-    });
-
-    wrap.querySelectorAll('.size-pill').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        const itemIdx = parseInt(btn.dataset.item,10);
-        selectedSizes[itemIdx] = btn.dataset.size;
-        renderVariantItems();
+      box.querySelectorAll('.size-pill').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          const itemIdx = parseInt(btn.dataset.item,10);
+          selectedSizes[itemIdx] = btn.dataset.size;
+          renderVariantItems();
+        });
       });
     });
   }
@@ -2759,6 +2979,7 @@ const StoreFront = (function(){
       document.getElementById('store-home-view').style.display = 'none';
       document.getElementById('store-product-view').style.display = 'none';
       document.getElementById('store-checkout-view').style.display = 'none';
+      document.getElementById('store-cart-view').style.display = 'none';
       document.getElementById('store-track-view').style.display = 'block';
       document.getElementById('store-brand-name').textContent = brandName(SettingsService.getSettings());
       TrackOrder.open(params.get('track'));
@@ -2767,22 +2988,30 @@ const StoreFront = (function(){
     const id = params.get('product');
     if(id){
       document.getElementById('store-home-view').style.display = 'none';
+      document.getElementById('store-cart-view').style.display = 'none';
+      document.getElementById('store-checkout-view').style.display = 'none';
       document.getElementById('store-product-view').style.display = 'block';
       renderProductPage();
     } else {
       document.getElementById('store-product-view').style.display = 'none';
       document.getElementById('store-checkout-view').style.display = 'none';
+      document.getElementById('store-cart-view').style.display = 'none';
       renderStoreHome();
     }
   }
 
+  let homeCat = 'All';
   function renderStoreHome(){
     const settings = SettingsService.getSettings();
     document.getElementById('store-brand-name').textContent = brandName(settings);
     document.title = brandName(settings);
-    const view = document.getElementById('store-home-view');
-    view.style.display = 'block';
-    const list = ProductService.getProducts().filter(p=>p.status !== 'inactive');
+    document.getElementById('store-home-view').style.display = 'block';
+    const all = ProductService.getProducts().filter(p=>p.status !== 'inactive');
+    const q = (document.getElementById('store-search').value || '').trim().toLowerCase();
+    const cats = all.map(p=>p.category).filter((c,i,a)=> c && a.indexOf(c) === i);
+    if(homeCat !== 'All' && cats.indexOf(homeCat) < 0) homeCat = 'All';
+    document.getElementById('store-cats').innerHTML = ['All'].concat(cats).map(c=>`<button type="button" class="cat-chip ${c===homeCat?'on':''}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join('');
+    const list = all.filter(p=> (homeCat === 'All' || p.category === homeCat) && (!q || (p.name + ' ' + (p.category || '')).toLowerCase().indexOf(q) >= 0));
     const grid = document.getElementById('store-home-grid');
     const empty = document.getElementById('store-home-empty');
     if(list.length === 0){ grid.innerHTML = ''; empty.style.display = 'block'; return; }
@@ -2791,14 +3020,17 @@ const StoreFront = (function(){
       const hasDisc = p.discount && p.discount > 0 && p.discount < p.price;
       const price = hasDisc ? p.discount : p.price;
       const img = (p.images && p.images[0]) || p.image || '';
+      const r = avgRating(p.name);
       return `
         <a class="store-home-card" href="?product=${encodeURIComponent(p.id)}">
-          <div class="h-img">${img ? `<img src="${img}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">` : '<i class="fa-solid fa-image"></i>'}</div>
+          <div class="h-img">${img ? `<img src="${img}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">` : '<i class="fa-solid fa-image"></i>'}
+            ${hasDisc ? `<span class="h-badge">-${Math.round((1 - p.discount/p.price)*100)}%</span>` : ''}
+            ${p.stock <= 0 ? '<span class="h-soldout">Out of stock</span>' : ''}</div>
           <div class="h-body">
             <div class="h-cat">${escapeHtml(p.category || '')}</div>
             <div class="h-name">${escapeHtml(p.name)}</div>
+            <div class="h-meta">${r.count ? `<span class="h-stars">★ ${r.avg.toFixed(1)}</span> (${r.count})` : ''}</div>
             <div class="h-price">${fmtMoney(price)}${hasDisc ? `<span class="h-old">${fmtMoney(p.price)}</span>` : ''}</div>
-            ${p.stock <= 0 ? '<div class="h-out">Out of stock</div>' : ''}
           </div>
         </a>`;
     }).join('');
@@ -2871,18 +3103,12 @@ const StoreFront = (function(){
     renderSuggestedProducts(product);
 
     const buyBtn = document.getElementById('store-buy-now-btn');
+    const addBtn = document.getElementById('store-add-cart-btn');
     const outNote = document.getElementById('store-outofstock-note');
-    if(product.stock <= 0 || product.status === 'inactive'){
-      buyBtn.disabled = true;
-      buyBtn.style.opacity = '.5';
-      buyBtn.style.cursor = 'not-allowed';
-      outNote.style.display = 'block';
-    } else {
-      buyBtn.disabled = false;
-      buyBtn.style.opacity = '1';
-      buyBtn.style.cursor = 'pointer';
-      outNote.style.display = 'none';
-    }
+    const unavailable = product.stock <= 0 || product.status === 'inactive';
+    buyBtn.disabled = unavailable;
+    if(addBtn) addBtn.disabled = unavailable;
+    outNote.style.display = unavailable ? 'block' : 'none';
   }
 
   function updateQtyDisplay(){
@@ -2966,28 +3192,6 @@ const StoreFront = (function(){
     }
   }
 
-  // Admin-facing summary (includes SKU) - stored on the order
-  function variantSummaryText(){
-    if(!needsItemOptions()) return '';
-    const counts = {};
-    for(let i = 0; i < qty; i++){
-      const parts = [];
-      if(hasVariants() && selectedVariants[i]) parts.push(selectedVariants[i].sku);
-      if(hasSizes() && selectedSizes[i]) parts.push(selectedSizes[i]);
-      const key = parts.join(' / ');
-      if(key) counts[key] = (counts[key]||0) + 1;
-    }
-    return Object.keys(counts).map(k => k + ' x' + counts[k]).join(', ');
-  }
-
-  // Customer-facing summary (sizes only, never SKU)
-  function customerSummaryText(){
-    if(!hasSizes()) return '';
-    const counts = {};
-    selectedSizes.forEach(sz=>{ if(sz) counts[sz] = (counts[sz]||0) + 1; });
-    return Object.keys(counts).map(sz => 'Size ' + sz + ' x' + counts[sz]).join(', ');
-  }
-
   function scrollTopNow(){
     var se=document.scrollingElement||document.documentElement;
     window.scrollTo(0,0); se.scrollTop=0; document.documentElement.scrollTop=0; document.body.scrollTop=0;
@@ -2997,30 +3201,256 @@ const StoreFront = (function(){
     requestAnimationFrame(function(){ scrollTopNow(); setTimeout(scrollTopNow,60); });
   }
 
-  function goToCheckout(){
-    if(!currentProduct) return;
-    if(hasSizes() && selectedSizes.some(sz=>!sz)){
-      showToast('Please select a size for every item','error');
-      return;
+  /* ===== CART (multi-product): Add to Cart -> Cart -> Checkout (billing) -> Place order ===== */
+  const CART_KEY = 'velora_cart_v1';
+  let cart = [];   // [{ id, pid, qty, variants:[{sku,image}], sizes:[] }]  (variants/sizes: one entry per unit)
+
+  function cartLoad(){
+    try{
+      const a = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+      cart = Array.isArray(a) ? a.filter(l=> l && l.pid && l.qty > 0) : [];
+    }catch(e){ cart = []; }
+  }
+  function cartSave(){
+    try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(e){}
+    updateCartBadge();
+  }
+  function cartCount(){ return cart.reduce((n,l)=> n + l.qty, 0); }
+  function updateCartBadge(){
+    const el = document.getElementById('cart-badge'); if(!el) return;
+    const n = cartCount();
+    el.textContent = n > 99 ? '99+' : n;
+    el.style.display = n > 0 ? 'inline-flex' : 'none';
+  }
+  function prodOf(l){ return ProductService.getById(l.pid); }
+  function unitOf(p){ return p.discount && p.discount > 0 ? p.discount : p.price; }
+  function qtyInCart(pid){ return cart.reduce((n,l)=> n + (l.pid === pid ? l.qty : 0), 0); }
+  function cartSubtotal(){
+    return cart.reduce((sum,l)=>{ const p = prodOf(l); return sum + (p ? unitOf(p) * l.qty : 0); }, 0);
+  }
+
+  /* drop removed / out-of-stock items and clamp quantities to current stock; returns true if anything changed */
+  function syncCartWithProducts(){
+    let changed = false;
+    const seen = {};
+    cart = cart.filter(l=>{
+      const p = prodOf(l);
+      if(!p || p.status === 'inactive' || p.stock <= 0){ changed = true; return false; }
+      const room = p.stock - (seen[l.pid] || 0);
+      if(room <= 0){ changed = true; return false; }
+      if(l.qty > room){
+        l.qty = room; changed = true;
+        l.variants = (l.variants || []).slice(0, room);
+        l.sizes = (l.sizes || []).slice(0, room);
+      }
+      seen[l.pid] = (seen[l.pid] || 0) + l.qty;
+      return true;
+    });
+    return changed;
+  }
+
+  function lineGroups(l){
+    const g = {};
+    for(let i = 0; i < l.qty; i++){
+      const v = (l.variants || [])[i] || null, sz = (l.sizes || [])[i] || '';
+      const k = (v ? v.sku : '') + '|' + sz;
+      (g[k] = g[k] || { v: v, s: sz, n: 0 }).n++;
     }
-    document.getElementById('store-product-view').style.display = 'none';
+    return Object.keys(g).map(k=> g[k]);
+  }
+  // Admin-facing summary (includes SKU) - stored on the order
+  function lineAdminText(l){
+    return lineGroups(l).map(g=>{
+      const parts = [];
+      if(g.v && g.v.sku) parts.push(g.v.sku);
+      if(g.s) parts.push(g.s);
+      return parts.length ? parts.join(' / ') + ' x' + g.n : '';
+    }).filter(Boolean).join(', ');
+  }
+  // Customer-facing summary (sizes only, never SKU)
+  function lineCustomerText(l){
+    const counts = {};
+    (l.sizes || []).forEach(sz=>{ if(sz) counts[sz] = (counts[sz] || 0) + 1; });
+    return Object.keys(counts).map(sz => 'Size ' + sz + ' x' + counts[sz]).join(', ');
+  }
+  function lineImage(l, p){
+    const g = lineGroups(l)[0];
+    return (g && g.v && g.v.image) || (p.images && p.images[0]) || p.image || '';
+  }
+  function lineSig(variants, sizes, n){
+    const set = {};
+    for(let i = 0; i < n; i++) set[((variants[i] && variants[i].sku) || '') + '/' + (sizes[i] || '')] = 1;
+    return Object.keys(set).sort().join('|');
+  }
+
+  function addToCart(goNow){
+    const p = currentProduct;
+    if(!p) return;
+    if(p.stock <= 0 || p.status === 'inactive'){ showToast('No more stock available','warning'); return; }
+    if(hasVariants() && selectedVariants.some(v=>!v)){ showToast('Please select a design for every item','error'); return; }
+    if(hasSizes() && selectedSizes.some(sz=>!sz)){ showToast('Please select a size for every item','error'); return; }
+    if(qtyInCart(p.id) + qty > p.stock){ showToast('No more stock available','warning'); return; }
+
+    const variants = hasVariants() ? selectedVariants.map(v=>({ sku: v.sku || '', image: v.image || '' })) : [];
+    const sizes = hasSizes() ? selectedSizes.slice() : [];
+    const sig = lineSig(variants, sizes, qty);
+    const existing = cart.find(l=> l.pid === p.id && lineSig(l.variants || [], l.sizes || [], l.qty) === sig);
+    if(existing){
+      existing.variants = (existing.variants || []).concat(variants);
+      existing.sizes = (existing.sizes || []).concat(sizes);
+      existing.qty += qty;
+    } else {
+      cart.push({ id: 'L' + Date.now().toString(36) + Math.random().toString(36).slice(2,6), pid: p.id, qty: qty, variants: variants, sizes: sizes });
+    }
+    cartSave();
+    if(goNow) showCartView();
+    else showCartSheet(p.name);
+  }
+
+  let sheetTimer = null;
+  function showCartSheet(name){
+    document.getElementById('cart-sheet-name').textContent = name + '  ·  🛒 ' + cartCount();
+    const el = document.getElementById('cart-sheet');
+    el.classList.add('show');
+    clearTimeout(sheetTimer);
+    sheetTimer = setTimeout(hideCartSheet, 7000);
+  }
+  function hideCartSheet(){ clearTimeout(sheetTimer); document.getElementById('cart-sheet').classList.remove('show'); }
+
+  function flagField(id){
+    const el = document.getElementById(id); if(!el) return;
+    const f = el.closest('.field') || el;
+    f.classList.add('field-error');
+    try{ f.scrollIntoView({ block:'center', behavior:'smooth' }); }catch(e){}
+    if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'){ try{ el.focus({ preventScroll:true }); }catch(e){} }
+  }
+
+  function hideAllViews(){
+    ['store-home-view','store-product-view','store-cart-view','store-checkout-view','store-track-view'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.style.display = 'none';
+    });
+  }
+
+  function updateCartTotals(){
+    const settings = SettingsService.getSettings();
+    const subtotal = cartSubtotal();
+    const discount = appliedCoupon ? Math.min(appliedCoupon.discount, subtotal) : 0;
+    const taxable = subtotal - discount;
+    const taxAmt = taxable * (Number(settings.tax || 0) / 100);
+    const total = taxable + taxAmt;
+    document.getElementById('cart-subtotal').textContent = fmtMoney(subtotal);
+    const row = document.getElementById('cart-discount-row');
+    if(discount > 0){ row.style.display = 'flex'; document.getElementById('cart-discount').textContent = '-' + fmtMoney(discount); }
+    else row.style.display = 'none';
+    document.getElementById('cart-tax').textContent = fmtMoney(taxAmt);
+    document.getElementById('cart-total').textContent = fmtMoney(total);
+    document.getElementById('cart-sticky-total').textContent = fmtMoney(total);
+  }
+
+  function renderCart(){
+    if(syncCartWithProducts()){ cartSave(); showToast('Some cart items were updated because of stock changes','warning'); }
+    const has = cart.length > 0;
+    document.getElementById('cart-grid').style.display = has ? '' : 'none';
+    document.getElementById('cart-empty').style.display = has ? 'none' : 'block';
+    document.getElementById('cart-count').textContent = has ? '(' + cartCount() + ')' : '';
+    document.getElementById('cart-sticky').style.display = has ? '' : 'none';
+    document.getElementById('cart-lines').innerHTML = cart.map(l=>{
+      const p = prodOf(l);
+      const unit = unitOf(p);
+      const img = lineImage(l, p);
+      const href = '?product=' + encodeURIComponent(p.id);
+      const chips = lineGroups(l).filter(g=> g.v || g.s).map(g=>
+        '<span class="opt-chip">' + (g.v && g.v.image ? '<img src="' + g.v.image + '" alt="">' : '') +
+        (g.s ? '<b>' + escapeHtml(g.s) + '</b>' : '') + '<i>×' + g.n + '</i></span>').join('');
+      return '<div class="cart-line" data-id="' + l.id + '">' +
+        '<a class="cl-img" href="' + href + '">' + (img ? '<img src="' + img + '" alt="" loading="lazy" decoding="async">' : '<i class="fa-solid fa-image"></i>') + '</a>' +
+        '<div class="cl-info">' +
+          '<a class="cl-name" href="' + href + '">' + escapeHtml(p.name) + '</a>' +
+          '<div class="cl-unit">' + fmtMoney(unit) + '</div>' +
+          (chips ? '<div class="cl-opts">' + chips + '</div>' : '') +
+          '<div class="cl-actions">' +
+            '<div class="qty-stepper"><button type="button" data-act="minus" aria-label="Decrease">−</button><span>' + l.qty + '</span><button type="button" data-act="plus" aria-label="Increase">+</button></div>' +
+            '<button type="button" class="cart-remove" data-act="remove"><i class="fa-regular fa-trash-can"></i> Remove</button>' +
+            '<div class="cl-total">' + fmtMoney(unit * l.qty) + '</div>' +
+          '</div>' +
+        '</div></div>';
+    }).join('');
+    revalidateCoupon();
+    syncCouponUI();
+    updateCartTotals();
+  }
+
+  function onCartLineClick(e){
+    const btn = e.target.closest('[data-act]');
+    if(!btn) return;
+    const row = btn.closest('.cart-line'); if(!row) return;
+    const idx = cart.findIndex(l=> l.id === row.dataset.id);
+    if(idx < 0) return;
+    const l = cart[idx], act = btn.dataset.act;
+    if(act === 'remove'){
+      cart.splice(idx, 1);
+    } else if(act === 'plus'){
+      const p = prodOf(l);
+      if(!p || qtyInCart(l.pid) >= p.stock){ showToast('No more stock available','warning'); return; }
+      /* the new unit copies the design/size of the last unit */
+      if((l.variants || []).length) l.variants.push(l.variants[l.variants.length - 1]);
+      if((l.sizes || []).length) l.sizes.push(l.sizes[l.sizes.length - 1]);
+      l.qty++;
+    } else if(act === 'minus'){
+      if(l.qty <= 1) return;
+      l.qty--;
+      if((l.variants || []).length > l.qty) l.variants.pop();
+      if((l.sizes || []).length > l.qty) l.sizes.pop();
+    }
+    cartSave();
+    renderCart();
+  }
+
+  function showCartView(){
+    hideCartSheet();
+    hideAllViews();
+    document.getElementById('store-cart-view').style.display = 'block';
+    renderCart();
+    resetScroll();
+  }
+
+  function leaveCart(){
+    hideAllViews();
+    if(getParams().get('product')){
+      document.getElementById('store-product-view').style.display = 'block';
+    } else {
+      renderStoreHome();
+    }
+    resetScroll();
+  }
+
+  function backToCart(){ showCartView(); }
+
+  function renderCheckoutItems(){
+    document.getElementById('chk-summary-items').innerHTML = cart.map(l=>{
+      const p = prodOf(l); if(!p) return '';
+      const img = lineImage(l, p);
+      const cs = lineCustomerText(l);
+      return '<div class="summary-product">' +
+        (img ? '<img src="' + img + '" alt="">' : '<div class="ph"><i class="fa-solid fa-image"></i></div>') +
+        '<div style="flex:1;min-width:0;"><div class="cell-main">' + escapeHtml(p.name + (cs ? ' (' + cs + ')' : '')) + '</div>' +
+        '<div class="cell-sub">Qty: ' + l.qty + '</div></div>' +
+        '<div style="font-weight:700;font-size:13px;flex-shrink:0;">' + fmtMoney(unitOf(p) * l.qty) + '</div></div>';
+    }).join('');
+  }
+
+  function goToCheckout(){
+    if(syncCartWithProducts()) cartSave();
+    if(cart.length === 0){ showToast('Cart is empty','warning'); renderCart(); return; }
+    hideAllViews();
     document.getElementById('store-checkout-view').style.display = 'block';
     document.getElementById('checkout-form').reset();
     document.querySelectorAll('.payment-opt').forEach((el,i)=>el.classList.toggle('selected', i===0));
     populateDistricts();
-    appliedCoupon = null;
-    document.getElementById('chk-coupon-input').value = '';
-    document.getElementById('chk-coupon-message').style.display = 'none';
-
-    const p = currentProduct;
-    const summaryImg = document.getElementById('chk-summary-img');
-    const summaryPh = document.getElementById('chk-summary-ph');
-    const displayImg = (hasVariants() && selectedVariants[0] && selectedVariants[0].image) || p.image;
-    if(displayImg){ summaryImg.src = displayImg; summaryImg.style.display='block'; summaryPh.style.display='none'; }
-    else { summaryImg.style.display='none'; summaryPh.style.display='flex'; }
-    const cSummary = customerSummaryText();
-    document.getElementById('chk-summary-name').textContent = p.name + (cSummary ? ' (' + cSummary + ')' : '');
-    document.getElementById('chk-summary-qty').textContent = 'Qty: ' + qty;
+    /* the coupon applied in the cart carries over to billing */
+    revalidateCoupon();
+    syncCouponUI();
+    renderCheckoutItems();
     updatePaymentPanel();
     hideDupNotice();
     placingOrder = false;
@@ -3042,10 +3472,8 @@ const StoreFront = (function(){
   }
 
   function updateCheckoutTotals(){
-    const p = currentProduct;
     const settings = SettingsService.getSettings();
-    const unitPrice = p.discount && p.discount > 0 ? p.discount : p.price;
-    const subtotal = unitPrice * qty;
+    const subtotal = cartSubtotal();
     const discount = appliedCoupon ? Math.min(appliedCoupon.discount, subtotal) : 0;
     const discountedSubtotal = subtotal - discount;
     const fp = currentPaymentMethod() === 'bkash_full' ? getFullPayConfig() : { type:'percentage', value:0 };
@@ -3079,33 +3507,77 @@ const StoreFront = (function(){
     }
     document.getElementById('chk-tax').textContent = fmtMoney(taxAmt);
     document.getElementById('chk-total').textContent = fmtMoney(total);
+    document.getElementById('chk-sticky-total').textContent = fmtMoney(total);
     return { subtotal: discountedSubtotal, rawSubtotal: subtotal, discount, fullPayDiscount, delivery, taxAmt, total };
   }
 
-  function applyCoupon(){
+  function applyCoupon(prefix){
     /* coupons load in the background; make sure they're here before validating */
-    DataService.loadKeys(['coupons']).then(applyCouponNow);
+    DataService.loadKeys(['coupons']).then(function(){ applyCouponNow(prefix || 'chk'); });
   }
 
-  function applyCouponNow(){
-    const code = document.getElementById('chk-coupon-input').value.trim();
-    const msgEl = document.getElementById('chk-coupon-message');
-    if(!code){ msgEl.style.display='none'; appliedCoupon = null; updateCheckoutTotals(); updatePaymentPanel(); return; }
-    const rawSubtotal = (currentProduct.discount && currentProduct.discount > 0 ? currentProduct.discount : currentProduct.price) * qty;
+  function couponMsg(text, color){
+    couponNote = text ? { text: text, color: color } : null;
+    ['chk','cart'].forEach(function(pfx){
+      const m = document.getElementById(pfx + '-coupon-message');
+      if(!m) return;
+      if(couponNote){ m.style.display = 'block'; m.style.color = couponNote.color; m.textContent = couponNote.text; }
+      else m.style.display = 'none';
+    });
+  }
+
+  /* keep the coupon box + message identical in the cart and in billing */
+  function syncCouponUI(){
+    ['chk','cart'].forEach(function(pfx){
+      const inp = document.getElementById(pfx + '-coupon-input');
+      if(inp) inp.value = appliedCoupon ? appliedCoupon.code : '';
+      const m = document.getElementById(pfx + '-coupon-message');
+      if(!m) return;
+      if(couponNote){ m.style.display = 'block'; m.style.color = couponNote.color; m.textContent = couponNote.text; }
+      else m.style.display = 'none';
+    });
+  }
+
+  function refreshAllTotals(){
+    updateCartTotals();
+    updateCheckoutTotals();
+    updatePaymentPanel();
+  }
+
+  /* quantity can change after a coupon was applied: recheck minimum order and recompute the discount */
+  function revalidateCoupon(){
+    if(!appliedCoupon) return;
+    if(cart.length === 0){ appliedCoupon = null; couponNote = null; syncCouponUI(); return; }
+    const raw = cartSubtotal();
+    const r = CouponService.validate(appliedCoupon.code, raw);
+    if(r.valid){
+      appliedCoupon = { code: r.coupon.code, discount: r.discount };
+      couponMsg('Coupon applied! You saved ' + fmtMoney(r.discount) + '.', 'var(--success)');
+    } else {
+      appliedCoupon = null;
+      couponMsg(r.message, 'var(--danger)');
+    }
+    syncCouponUI();
+  }
+
+  function applyCouponNow(prefix){
+    const code = document.getElementById(prefix + '-coupon-input').value.trim();
+    if(!code){
+      appliedCoupon = null; couponMsg(null); syncCouponUI(); refreshAllTotals(); return;
+    }
+    const rawSubtotal = cartSubtotal();
     const result = CouponService.validate(code, rawSubtotal);
-    msgEl.style.display = 'block';
     if(result.valid){
       appliedCoupon = { code: result.coupon.code, discount: result.discount };
-      msgEl.style.color = 'var(--success)';
-      msgEl.textContent = 'Coupon applied! You saved ' + fmtMoney(result.discount) + '.';
+      couponMsg('Coupon applied! You saved ' + fmtMoney(result.discount) + '.', 'var(--success)');
       showToast('Coupon applied successfully','success');
     } else {
       appliedCoupon = null;
-      msgEl.style.color = 'var(--danger)';
-      msgEl.textContent = result.message;
+      couponMsg(result.message, 'var(--danger)');
     }
-    updateCheckoutTotals();
-    updatePaymentPanel();
+    syncCouponUI();
+    if(!result.valid) document.getElementById(prefix + '-coupon-input').value = code;
+    refreshAllTotals();
   }
 
   function backToProduct(){
@@ -3180,12 +3652,12 @@ const StoreFront = (function(){
   }
 
   /* Checks done in this browser before anything is sent. Returns true if the order may continue. */
-  function clientGuardOk(phone, productId){
+  function clientGuardOk(phone, productIds){
     const now = Date.now();
     const recent = guardLoad();
     const G = ORDER_GUARD;
     if(G.DUP_WINDOW_HOURS > 0){
-      const same = recent.find(r=> r.pid === productId && now - r.t < G.DUP_WINDOW_HOURS*3600*1000);
+      const same = recent.find(r=> (r.pids ? r.pids.some(x=> productIds.indexOf(x) >= 0) : productIds.indexOf(r.pid) >= 0) && now - r.t < G.DUP_WINDOW_HOURS*3600*1000);
       if(same){
         showDupNotice('You have already ordered this product. We are processing your order, so a new one cannot be placed right now.', same.trk);
         return false;
@@ -3207,6 +3679,19 @@ const StoreFront = (function(){
     return true;
   }
 
+  function setOrderBusy(busy){
+    document.querySelectorAll('#place-order-btn,#chk-sticky-btn').forEach(function(x){
+      if(busy){
+        if(x.dataset.orig === undefined) x.dataset.orig = x.innerHTML;
+        x.innerHTML = '<span class="loading-spinner"></span> Placing order...';
+        x.disabled = true;
+      } else {
+        if(x.dataset.orig !== undefined){ x.innerHTML = x.dataset.orig; delete x.dataset.orig; }
+        x.disabled = false;
+      }
+    });
+  }
+
   function placeOrder(){
     const name = document.getElementById('chk-name').value.trim();
     const phone = document.getElementById('chk-phone').value.trim();
@@ -3225,11 +3710,13 @@ const StoreFront = (function(){
 
     if(!name || !phone || !thana || !district || !fullAddress){
       showToast('Please fill in all required delivery details','error');
+      flagField(!name ? 'chk-name' : !phone ? 'chk-phone' : !district ? 'chk-district' : !thana ? 'chk-thana' : 'chk-full-address');
       return;
     }
     const phoneNorm = normPhone(phone);
     if(!isValidBdPhone(phoneNorm)){
       showToast('Please enter a valid mobile number (01XXXXXXXXX)','error');
+      flagField('chk-phone');
       return;
     }
 
@@ -3242,28 +3729,26 @@ const StoreFront = (function(){
       showToast(method === 'cod'
         ? 'Please enter your bKash number and Transaction ID for the advance delivery charge'
         : 'Please enter your bKash number and Transaction ID to confirm payment', 'error');
+      flagField(!bkashNumber ? 'chk-bkash-number' : 'chk-bkash-txn');
       return;
     }
 
-    if(hasVariants() && selectedVariants.some(v=>!v)){
-      showToast('Please select a design for every item before placing your order','error');
+    if(syncCartWithProducts()){
+      cartSave(); renderCheckoutItems(); updatePaymentPanel();
+      showToast('Some cart items were updated because of stock changes','warning');
       return;
     }
-    if(hasSizes() && selectedSizes.some(sz=>!sz)){
-      showToast('Please select a size for every item before placing your order','error');
-      return;
-    }
+    if(cart.length === 0){ showToast('Cart is empty','warning'); return; }
 
     const totals = updateCheckoutTotals();
-    const p = currentProduct;
+    const lines = cart.map(l=> ({ l: l, p: prodOf(l) }));
+    const pids = lines.map(x=> x.l.pid).filter((v,i,arr)=> arr.indexOf(v) === i);
+    const totalQty = cartCount();
 
-    if(!clientGuardOk(phoneNorm, p.id)) return;
+    if(!clientGuardOk(phoneNorm, pids)) return;
     placingOrder = true;
 
-    const btn = document.getElementById('place-order-btn');
-    const original = btn.innerHTML;
-    btn.innerHTML = '<span class="loading-spinner"></span> Placing order...';
-    btn.disabled = true;
+    setOrderBusy(true);
 
     {
       const trackingId = generateTrackingId();
@@ -3279,12 +3764,18 @@ const StoreFront = (function(){
         trackingId,
         customer: name,
         phone: phoneNorm,
-        productId: p.id,
-        product: p.name + (variantSummaryText() ? ' (' + variantSummaryText() + ')' : ''),
-        variantSku: variantSummaryText(),
-        sizes: selectedSizes.slice(),
+        productId: lines[0].l.pid,
+        productIds: pids,
+        product: lines.map(x=>{ const t = lineAdminText(x.l); return x.p.name + (t ? ' (' + t + ')' : (lines.length > 1 ? ' x' + x.l.qty : '')); }).join(' + '),
+        variantSku: lines.map(x=> lineAdminText(x.l)).filter(Boolean).join(' | '),
+        sizes: lines.reduce((a,x)=> a.concat(x.l.sizes || []), []),
+        items: lines.map(x=>({
+          productId: x.l.pid, name: x.p.name, unitPrice: unitOf(x.p), quantity: x.l.qty,
+          variants: (x.l.variants || []).map(v=> v.sku || ''), sizes: x.l.sizes || [],
+          options: lineAdminText(x.l)
+        })),
         fullPayDiscount: Math.round((totals.fullPayDiscount||0)*100)/100,
-        quantity: qty,
+        quantity: totalQty,
         total: Math.round(totals.total * 100)/100,
         payment: paymentLabel,
         advancePaid: Math.round(advanceAmt*100)/100,
@@ -3300,6 +3791,12 @@ const StoreFront = (function(){
         thana, district, email
       };
       const toList = (v)=> Array.isArray(v) ? v.slice() : (v ? Object.values(v) : []);
+      const pidSet = new Set(pids);
+      const orderHasAny = (x)=>{
+        const ids = Array.isArray(x.items) ? x.items.map(i=> i.productId) : (x.productId ? [x.productId] : []);
+        if(ids.length) return ids.some(id=> pidSet.has(id));
+        return lines.some(y=> String(x.product || '').indexOf(y.p.name) === 0);
+      };
       let dupReason = null;
       const saveOrder = DataService.transact('orders', (cur)=>{
         dupReason = null;
@@ -3312,7 +3809,7 @@ const StoreFront = (function(){
           const age = now - (Number(x.date) || 0);
           if(G.COOLDOWN_SECONDS > 0 && age < G.COOLDOWN_SECONDS*1000){ dupReason = 'cooldown'; return; }
           if(G.DUP_WINDOW_HOURS > 0 && age < G.DUP_WINDOW_HOURS*3600*1000 && x.status !== 'cancelled' &&
-             (x.productId ? x.productId === p.id : String(x.product || '').indexOf(p.name) === 0)){
+             orderHasAny(x)){
             dupReason = 'same'; return;
           }
         }
@@ -3336,19 +3833,24 @@ const StoreFront = (function(){
         }
         return customers;
       }).catch((err)=> console.warn('Customer record not updated:', err));
-      const pIdx = ProductService.getProducts().findIndex(x=> x.id === p.id);
-      const saveStock = ()=> pIdx < 0 ? Promise.resolve() : FirebaseDB.ref('products/' + pIdx).transaction((cur)=>{
-        if(!cur || cur.id !== p.id) return; // product moved/removed: abort
-        return Object.assign({}, cur, { stock: Math.max(0, (Number(cur.stock) || 0) - qty) });
-      }).catch((err)=> console.warn('Stock not updated:', err));
+      const stockByPid = {};
+      lines.forEach(x=>{ stockByPid[x.l.pid] = (stockByPid[x.l.pid] || 0) + x.l.qty; });
+      const saveStock = ()=> Promise.all(Object.keys(stockByPid).map(pid=>{
+        const pIdx = ProductService.getProducts().findIndex(x=> x.id === pid);
+        if(pIdx < 0) return Promise.resolve();
+        return FirebaseDB.ref('products/' + pIdx).transaction((cur)=>{
+          if(!cur || cur.id !== pid) return; // product moved/removed: abort
+          return Object.assign({}, cur, { stock: Math.max(0, (Number(cur.stock) || 0) - stockByPid[pid]) });
+        }).catch((err)=> console.warn('Stock not updated:', err));
+      }));
 
       /* order first; customer + stock are only touched if the order was really accepted */
       saveOrder.then(()=> Promise.all([saveCustomer(), saveStock()])).then(()=>{
         notifyOwnerByEmail(order);   /* fire-and-forget: never blocks or breaks the order */
-        guardSave({ t: Date.now(), pid: p.id, phone: phoneNorm, trk: trackingId });
+        guardSave({ t: Date.now(), pid: pids[0], pids: pids, phone: phoneNorm, trk: trackingId });
+        cart = []; cartSave(); appliedCoupon = null; couponNote = null; syncCouponUI();
         placingOrder = false;
-        btn.innerHTML = original;
-        btn.disabled = false;
+        setOrderBusy(false);
         document.getElementById('success-tracking-id').textContent = trackingId;
         document.getElementById('success-track-link').href = location.pathname + '?track=' + encodeURIComponent(trackingId);
         document.getElementById('success-order-id-text').textContent = order.id;
@@ -3356,8 +3858,7 @@ const StoreFront = (function(){
         openModal('order-success-modal-overlay');
       }).catch((err)=>{
         placingOrder = false;
-        btn.innerHTML = original;
-        btn.disabled = false;
+        setOrderBusy(false);
         if(dupReason){
           showDupNotice(dupReason === 'cooldown'
             ? 'An order from this phone number was just placed. Please wait a couple of minutes before ordering again.'
@@ -3375,6 +3876,8 @@ const StoreFront = (function(){
     initCombo('chk-district', { label:'District', placeholder:'Select District', disabledPlaceholder:'Select District' });
     initCombo('chk-thana', { label:'Upazila', placeholder:'Select Upazila', disabledPlaceholder:'Select District First' });
 
+    cartLoad();
+    if(syncCartWithProducts()) cartSave(); else updateCartBadge();
     renderStorePage();
 
     document.getElementById('store-qty-minus').addEventListener('click', ()=>{
@@ -3384,8 +3887,23 @@ const StoreFront = (function(){
       if(currentProduct && qty < currentProduct.stock){ qty++; updateQtyDisplay(); }
       else showToast('No more stock available','warning');
     });
-    document.getElementById('store-buy-now-btn').addEventListener('click', goToCheckout);
-    document.getElementById('store-back-to-product').addEventListener('click', (e)=>{ e.preventDefault(); backToProduct(); });
+    document.getElementById('store-add-cart-btn').addEventListener('click', ()=> addToCart(false));
+    document.getElementById('store-buy-now-btn').addEventListener('click', ()=> addToCart(true));
+    document.getElementById('store-cart-btn').addEventListener('click', showCartView);
+    document.getElementById('store-cats').addEventListener('click', (e)=>{ const b = e.target.closest('.cat-chip'); if(b){ homeCat = b.dataset.cat; renderStoreHome(); } });
+    document.getElementById('store-search').addEventListener('input', ()=>{
+      if(document.getElementById('store-home-view').style.display === 'none') hideAllViews();
+      renderStoreHome();
+    });
+    document.getElementById('store-search-form').addEventListener('submit', (e)=>{ e.preventDefault(); document.getElementById('store-search').blur(); });
+    document.getElementById('cart-checkout-btn').addEventListener('click', goToCheckout);
+    document.getElementById('cart-back-to-product').addEventListener('click', (e)=>{ e.preventDefault(); leaveCart(); });
+    document.getElementById('cart-empty-btn').addEventListener('click', leaveCart);
+    document.getElementById('cart-lines').addEventListener('click', onCartLineClick);
+    document.getElementById('cart-apply-coupon-btn').addEventListener('click', ()=> applyCoupon('cart'));
+    document.getElementById('cart-coupon-input').addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); applyCoupon('cart'); } });
+    document.getElementById('chk-coupon-input').addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); applyCoupon('chk'); } });
+    document.getElementById('store-back-to-product').addEventListener('click', (e)=>{ e.preventDefault(); backToCart(); });
     document.querySelectorAll('input[name="chk-payment"]').forEach(radio=>{
       radio.addEventListener('change', ()=>{
         document.querySelectorAll('.payment-opt').forEach(o=>{
@@ -3399,11 +3917,19 @@ const StoreFront = (function(){
       navigator.clipboard.writeText(num).then(()=> showToast('bKash number copied','success')).catch(()=>{});
     });
     document.getElementById('place-order-btn').addEventListener('click', placeOrder);
+    document.getElementById('chk-sticky-btn').addEventListener('click', placeOrder);
+    document.getElementById('cart-sticky-btn').addEventListener('click', goToCheckout);
+    document.getElementById('cart-sheet-close').addEventListener('click', hideCartSheet);
+    document.getElementById('cart-sheet-view').addEventListener('click', showCartView);
+    document.getElementById('cart-sheet-continue').addEventListener('click', ()=>{ hideCartSheet(); window.location.href = window.location.pathname; });
+    ['input','change'].forEach(ev=> document.getElementById('checkout-form').addEventListener(ev, (e)=>{
+      const f = e.target.closest && e.target.closest('.field'); if(f) f.classList.remove('field-error');
+    }));
     document.getElementById('chk-district').addEventListener('change', function(){
       populateUpazilas(this.value);
       updatePaymentPanel();   /* recalculates delivery charge + totals + advance amount */
     });
-    document.getElementById('chk-apply-coupon-btn').addEventListener('click', applyCoupon);
+    document.getElementById('chk-apply-coupon-btn').addEventListener('click', ()=> applyCoupon('chk'));
     document.addEventListener('click', (e)=>{
       if(!e.target.closest('.variant-dropdown')){
         document.querySelectorAll('.variant-dropdown.open').forEach(d=>d.classList.remove('open'));
@@ -3415,14 +3941,15 @@ const StoreFront = (function(){
     });
     document.getElementById('success-close-btn').addEventListener('click', ()=>{
       closeModal('order-success-modal-overlay');
-      document.getElementById('store-checkout-view').style.display = 'none';
-      document.getElementById('store-product-view').style.display = 'block';
-      renderProductPage();
+      appliedCoupon = null; couponNote = null; syncCouponUI();
+      hideAllViews();
+      renderStorePage();
       resetScroll();
     });
     DataService.onRemoteUpdate = (key)=>{
       if(key === 'products' || key === 'settings'){
-        if(document.getElementById('store-home-view').style.display !== 'none') renderStoreHome();
+        if(document.getElementById('store-cart-view').style.display !== 'none') renderCart();
+        else if(document.getElementById('store-home-view').style.display !== 'none') renderStoreHome();
         else if(key === 'products' && document.getElementById('store-product-view').style.display !== 'none') renderProductPage();
       } else if(key === 'reviews'){
         renderRating();
@@ -3449,6 +3976,7 @@ const StoreFront = (function(){
   StoreFront.init();
   document.getElementById('store-footer-year').textContent = new Date().getFullYear();
   document.getElementById('store-footer-brand').textContent = brandName(SettingsService.getSettings());
+  document.getElementById('store-footer-brand2').textContent = brandName(SettingsService.getSettings());
   DataService.loadKeys(['reviews', 'coupons']);
 })();
 </script>
@@ -3500,7 +4028,12 @@ const StoreFront = (function(){
     'Please select a size for every item before placing your order':'অর্ডারের আগে প্রতিটি পণ্যের সাইজ বাছাই করুন',
     'Could not place your order. Please check your connection and try again.':'অর্ডার করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।',
     'No more stock available':'আর স্টক নেই','bKash number copied':'বিকাশ নম্বর কপি হয়েছে','Tracking ID copied':'ট্র্যাকিং আইডি কপি হয়েছে',
-    'Coupon code':'কুপন কোড','Copy number':'নম্বর কপি করুন','Copy':'কপি','Go to home page':'হোম পেজে যান'
+    'Add to Cart':'কার্টে যোগ করুন','Shop Smart. Order Easily.':'সহজে কিনুন, নিশ্চিন্তে অর্ডার করুন।','Pick your favourite products and get them delivered to your door.':'পছন্দের পণ্য বেছে নিন, দরজায় পৌঁছে যাবে।','Search products':'পণ্য খুঁজুন','All':'সব','Quick Links':'দ্রুত লিংক','Home':'হোম','Quality products, easy ordering.':'মানসম্মত পণ্য, সহজ অর্ডার।','View Cart':'কার্ট দেখুন','Added to cart':'কার্টে যোগ হয়েছে','← Continue Shopping':'← কেনাকাটা চালিয়ে যান',
+    'Please select a design for every item':'প্রতিটি পণ্যের ডিজাইন বাছাই করুন','Some cart items were updated because of stock changes':'স্টক পরিবর্তনের কারণে কার্টের কিছু পণ্য আপডেট হয়েছে',
+    'Cart is empty':'কার্ট খালি','Cart':'কার্ট','Billing':'বিলিং','Your Cart':'আপনার কার্ট','Order Summary':'অর্ডার সারসংক্ষেপ','Remove':'মুছুন',
+    'Add a product to continue.':'এগিয়ে যেতে একটি পণ্য যোগ করুন।','Estimated Total':'আনুমানিক মোট',
+    'Delivery charge is added at checkout based on your district.':'ডেলিভারি চার্জ জেলা অনুযায়ী চেকআউটে যোগ হবে।','Proceed to Checkout':'চেকআউটে যান',
+    '← Back to cart':'← কার্টে ফিরে যান','Coupon code':'কুপন কোড','Copy number':'নম্বর কপি করুন','Copy':'কপি','Go to home page':'হোম পেজে যান'
   };
   if(typeof BD_PLACE_BN!=='undefined'){ for(var pk in BD_PLACE_BN){ if(D[pk]===undefined) D[pk]=BD_PLACE_BN[pk]; } }
   var P=[ /* [regex, replacer] for dynamic strings */
