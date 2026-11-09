@@ -1200,6 +1200,31 @@ body{font-family:'Inter','Hind Siliguri','Noto Sans Bengali',-apple-system,Blink
   .ft-grid>div:first-child{grid-column:1/-1;}
   .store-footer{padding-bottom:96px;}
 }
+/* ===== MOBILE OVERFLOW FIXES ===== */
+#storefront-screen{overflow-x:clip;}
+.checkout-grid>*,.checkout-card,.summary-card,.cl-info{min-width:0;}
+#cart-coupon-input,#chk-coupon-input{min-width:0;width:100%;}
+#cart-apply-coupon-btn,#chk-apply-coupon-btn{flex:0 0 auto;white-space:nowrap;}
+.store-brand,.store-topbar>a:first-child{min-width:0;}
+.sticky-bar .btn,.pd-btn-row .btn,.cs-btns .btn{min-width:0;white-space:nowrap;}
+@media(max-width:760px){
+  #cart-apply-coupon-btn,#chk-apply-coupon-btn{padding:0 14px!important;font-size:13.5px!important;}
+  .cs-btns .btn{padding:13px 6px;font-size:13.5px;}
+  .cs-txt small{max-width:100%;}
+}
+@media(max-width:380px){
+  .sticky-bar{gap:10px;padding-left:10px;padding-right:10px;}
+  .sticky-bar .btn{font-size:14px;padding:14px 6px;}
+  .sb-total b{font-size:16px;}
+  .pd-btn-row .btn{font-size:13.5px;padding:14px 4px;gap:5px;}
+  .cl-img{width:60px;height:60px;}
+  .cart-steps{gap:6px;font-size:11px;padding:10px 6px;}
+  .cart-steps .sep{width:16px;}
+}
+/* ===== persistent cart popup ===== */
+.cart-sheet.pulse{animation:cartPulse .45s ease;}
+@keyframes cartPulse{0%{transform:translate(-50%,0) scale(1);}40%{transform:translate(-50%,0) scale(1.04);}100%{transform:translate(-50%,0) scale(1);}}
+@media(max-width:760px){.cart-sheet.on-product{bottom:calc(86px + env(safe-area-inset-bottom));}}
 </style>
 </head>
 <body>
@@ -1505,8 +1530,7 @@ try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }cat
 <div class="cart-sheet" id="cart-sheet" role="status" aria-live="polite">
   <div class="cs-head">
     <span class="cs-ok"><i class="fa-solid fa-check"></i></span>
-    <div class="cs-txt"><b>Added to cart</b><small id="cart-sheet-name"></small></div>
-    <button type="button" class="cs-close" id="cart-sheet-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <div class="cs-txt"><b>Your Cart</b><small id="cart-sheet-name"></small></div>
   </div>
   <div class="cs-btns">
     <button type="button" class="btn btn-secondary" id="cart-sheet-continue">Continue Shopping</button>
@@ -3221,6 +3245,7 @@ const StoreFront = (function(){
     const n = cartCount();
     el.textContent = n > 99 ? '99+' : n;
     el.style.display = n > 0 ? 'inline-flex' : 'none';
+    syncCartSheet(false);
   }
   function prodOf(l){ return ProductService.getById(l.pid); }
   function unitOf(p){ return p.discount && p.discount > 0 ? p.discount : p.price; }
@@ -3304,18 +3329,26 @@ const StoreFront = (function(){
     }
     cartSave();
     if(goNow) showCartView();
-    else showCartSheet(p.name);
+    else syncCartSheet(true);
   }
 
-  let sheetTimer = null;
-  function showCartSheet(name){
-    document.getElementById('cart-sheet-name').textContent = name + '  ·  🛒 ' + cartCount();
-    const el = document.getElementById('cart-sheet');
-    el.classList.add('show');
-    clearTimeout(sheetTimer);
-    sheetTimer = setTimeout(hideCartSheet, 7000);
+  /* The cart popup stays on screen whenever the cart has items (home / product pages).
+     It only goes away when the customer opens the cart (or the cart is empty). */
+  function syncCartSheet(justAdded){
+    const el = document.getElementById('cart-sheet'); if(!el) return;
+    const vis = (id)=>{ const x = document.getElementById(id); return !!x && getComputedStyle(x).display !== 'none'; };
+    const show = cart.length > 0 && vis('storefront-screen') && (vis('store-home-view') || vis('store-product-view')) &&
+                 !vis('store-cart-view') && !vis('store-checkout-view') && !vis('store-track-view');
+    if(show){
+      document.getElementById('cart-sheet-name').textContent = (justAdded ? '✓ ' : '') + '🛒 ' + cartCount() + '  ·  ' + fmtMoney(cartSubtotal());
+      el.classList.toggle('on-product', vis('store-product-view'));
+      el.classList.add('show');
+      if(justAdded){ el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse'); }
+    } else {
+      el.classList.remove('show');
+    }
   }
-  function hideCartSheet(){ clearTimeout(sheetTimer); document.getElementById('cart-sheet').classList.remove('show'); }
+  function hideCartSheet(){ document.getElementById('cart-sheet').classList.remove('show'); }
 
   function flagField(id){
     const el = document.getElementById(id); if(!el) return;
@@ -3919,9 +3952,13 @@ const StoreFront = (function(){
     document.getElementById('place-order-btn').addEventListener('click', placeOrder);
     document.getElementById('chk-sticky-btn').addEventListener('click', placeOrder);
     document.getElementById('cart-sticky-btn').addEventListener('click', goToCheckout);
-    document.getElementById('cart-sheet-close').addEventListener('click', hideCartSheet);
+    const sheetObs = new MutationObserver(()=> syncCartSheet(false));
+    ['storefront-screen','store-home-view','store-product-view','store-cart-view','store-checkout-view','store-track-view'].forEach(id=>{
+      const e = document.getElementById(id); if(e) sheetObs.observe(e, { attributes: true, attributeFilter: ['style'] });
+    });
+    syncCartSheet(false);
     document.getElementById('cart-sheet-view').addEventListener('click', showCartView);
-    document.getElementById('cart-sheet-continue').addEventListener('click', ()=>{ hideCartSheet(); window.location.href = window.location.pathname; });
+    document.getElementById('cart-sheet-continue').addEventListener('click', ()=>{ window.location.href = window.location.pathname; });
     ['input','change'].forEach(ev=> document.getElementById('checkout-form').addEventListener(ev, (e)=>{
       const f = e.target.closest && e.target.closest('.field'); if(f) f.classList.remove('field-error');
     }));
