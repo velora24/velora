@@ -272,6 +272,10 @@ a{color:inherit;text-decoration:none;}
 .stat-change.down{color:var(--danger);}
 .stat-change.flat{color:var(--text-secondary);}
 
+.vis-tab{padding:6px 12px;border:none;background:transparent;border-radius:6px;font-size:12.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
+.vis-tab.active{background:var(--white);color:var(--primary);box-shadow:var(--shadow-sm);}
+.vis-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;font-size:12.5px;font-weight:600;background:var(--bg);}
+.vis-chip i{color:var(--primary);}
 .card{
   background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:var(--shadow-sm);
@@ -1163,6 +1167,21 @@ table.compact-table td.col-actions .row-actions{justify-content:flex-end;}
           </div>
         </div>
 
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-header">
+            <h3>Website Visitors</h3>
+            <div class="chart-tabs" id="vis-tabs">
+              <button class="vis-tab" data-range="7">7 Days</button>
+              <button class="vis-tab active" data-range="14">14 Days</button>
+              <button class="vis-tab" data-range="30">30 Days</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="vis-devices" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;"></div>
+            <canvas id="visitors-chart" height="200"></canvas>
+          </div>
+        </div>
+
         <div class="card">
           <div class="card-header">
             <h3>Recent Orders</h3>
@@ -1700,7 +1719,7 @@ const DataService = {
     return Promise.all(tasks).then(()=>{ DataService.ready = true; });
   },
   loadAll(waitKeys){
-    return DataService.loadKeys(['products', 'customers', 'orders', 'reviews', 'settings', 'coupons'], waitKeys);
+    return DataService.loadKeys(['products', 'customers', 'orders', 'reviews', 'settings', 'coupons', 'visitors'], waitKeys);
   },
   /* Detach listeners and forget cached data (used on logout). */
   reset(){
@@ -2334,6 +2353,19 @@ function renderDashboard(){
     { title:'Total Sales', value: fmtMoney(totalSales), icon:'fa-sack-dollar', color:'#15803D', bg:'var(--success-bg)', change:'Across all orders', dir:'up' },
   ];
 
+  /* Website visitors: one count per device per day, written by the storefront */
+  const vs = DataService.get('visitors', {}) || {};
+  const vDaily = vs.daily || {}, vTypes = vs.types || {};
+  const totalVis = Object.keys(vDaily).reduce((n,k)=> n + (Number(vDaily[k]) || 0), 0);
+  const todayVis = Number(vDaily[visDayKey(new Date())]) || 0;
+  const yDate = new Date(); yDate.setDate(yDate.getDate() - 1);
+  const yestVis = Number(vDaily[visDayKey(yDate)]) || 0;
+  const vDiff = todayVis - yestVis;
+  stats.push(
+    { title:'Total Visitors', value: totalVis, icon:'fa-eye', color:'#0369A1', bg:'#E0F2FE', change: (Number(vTypes.mobile)||0) + ' mobile · ' + (Number(vTypes.desktop)||0) + ' desktop', dir:'flat' },
+    { title:"Today's Visitors", value: todayVis, icon:'fa-chart-line', color:'#0F766E', bg:'#CCFBF1', change: vDiff === 0 ? 'Same as yesterday' : (vDiff > 0 ? '+' : '') + vDiff + ' vs yesterday', dir: vDiff > 0 ? 'up' : (vDiff < 0 ? 'down' : 'flat') }
+  );
+
   document.getElementById('stats-grid').innerHTML = stats.map(s=>`
     <div class="stat-card">
       <div class="stat-top">
@@ -2350,6 +2382,7 @@ function renderDashboard(){
   renderTopProducts(products, orders);
   renderRecentOrders(orders);
   renderSalesChart(30, orders);
+  renderVisitorsChart(visRange);
 }
 
 function renderTopProducts(products, orders){
@@ -2484,6 +2517,51 @@ function renderSalesChart(days, orders){
     }
   });
 }
+
+/* ---------- Website visitors graph ---------- */
+let visRange = 14;
+let visitorsChart = null;
+function visDayKey(d){
+  const p = n => String(n).padStart(2,'0');
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+}
+function renderVisitorsChart(days){
+  const canvas = document.getElementById('visitors-chart');
+  if(!canvas) return;
+  const vs = DataService.get('visitors', {}) || {};
+  const daily = vs.daily || {}, types = vs.types || {};
+  const labels = [], data = [];
+  for(let i = days - 1; i >= 0; i--){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    labels.push(d.toLocaleDateString('en-US', { month:'short', day:'numeric' }));
+    data.push(Number(daily[visDayKey(d)]) || 0);
+  }
+  document.getElementById('vis-devices').innerHTML =
+    '<span class="vis-chip"><i class="fa-solid fa-mobile-screen"></i> Mobile: ' + (Number(types.mobile)||0) + '</span>' +
+    '<span class="vis-chip"><i class="fa-solid fa-desktop"></i> Desktop: ' + (Number(types.desktop)||0) + '</span>' +
+    '<span class="vis-chip"><i class="fa-solid fa-tablet-screen-button"></i> Tablet: ' + (Number(types.tablet)||0) + '</span>';
+  if(visitorsChart) visitorsChart.destroy();
+  visitorsChart = new Chart(canvas.getContext('2d'), {
+    type:'bar',
+    data:{ labels, datasets:[{ label:'Visitors', data, backgroundColor:'rgba(37,99,235,0.85)', borderRadius:6, maxBarThickness:28 }] },
+    options:{
+      responsive:true,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ font:{family:'Inter',size:11}, color:'#64748B', maxRotation:0, autoSkip:true } },
+        y:{ beginAtZero:true, grid:{ color:'#F1F5F9' }, ticks:{ font:{family:'Inter',size:11}, color:'#64748B', precision:0 } }
+      }
+    }
+  });
+}
+document.getElementById('vis-tabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.vis-tab');
+  if(!btn) return;
+  document.querySelectorAll('.vis-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  visRange = parseInt(btn.dataset.range, 10);
+  renderVisitorsChart(visRange);
+});
 
 document.getElementById('chart-tabs').addEventListener('click', (e)=>{
   const btn = e.target.closest('.chart-tab');
@@ -3517,6 +3595,7 @@ function enterApp(){
   NotificationService.startPolling();
 
   DataService.onRemoteUpdate = function(key){
+    if(key === 'visitors'){ if(currentAdminPage === 'dashboard') renderDashboard(); return; }
     if(key === 'orders'){
       if(currentAdminPage === 'orders') renderOrders();
       if(currentAdminPage === 'dashboard') renderDashboard();
