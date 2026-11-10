@@ -1545,18 +1545,30 @@ const FirebaseDB = firebase.database();
     const ua = navigator.userAgent || '';
     if(/bot|crawl|spider|preview/i.test(ua)) return;
     const type = (/iPad|Tablet/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua))) ? 'tablet' : (/Mobi|iPhone|Android/i.test(ua) ? 'mobile' : 'desktop');
-    const inc = (path)=> FirebaseDB.ref(path).transaction(c => (Number(c) || 0) + 1).catch(()=>{});
-    let vid = null;
-    try{ vid = localStorage.getItem('velora_vid'); }catch(e){}
+    /* Server-side +1: needs no read permission (visitors cannot read the counters), unlike a transaction */
+    const inc = (path)=>{
+      const ref = FirebaseDB.ref(path);
+      if(firebase.database.ServerValue && firebase.database.ServerValue.increment) return ref.set(firebase.database.ServerValue.increment(1));
+      return ref.transaction(c => (Number(c) || 0) + 1);
+    };
+    let vid = null, counted = null;
+    try{ vid = localStorage.getItem('velora_vid'); counted = localStorage.getItem('velora_counted'); }catch(e){}
     if(!vid){
       vid = 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
-      let saved = false;
-      try{ localStorage.setItem('velora_vid', vid); saved = true; }catch(e){}
-      if(saved){            /* first visit from this browser: count it once */
+      try{ localStorage.setItem('velora_vid', vid); }catch(e){ vid = vid; }
+    }
+    /* Total Views: count this browser once. The "counted" flag is saved only after the write succeeded,
+       so a failed write is retried on the next visit instead of being lost. */
+    if(!counted){
+      let canSave = true;
+      try{ localStorage.setItem('velora_probe', '1'); localStorage.removeItem('velora_probe'); }catch(e){ canSave = false; }
+      if(canSave){
         const d = new Date(), p = n => String(n).padStart(2,'0');
-        inc('visitors/total');
-        inc('visitors/daily/' + d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()));
-        inc('visitors/types/' + type);
+        inc('visitors/total').then(function(){
+          try{ localStorage.setItem('velora_counted', '1'); }catch(e){}
+          inc('visitors/daily/' + d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate())).catch(function(){});
+          inc('visitors/types/' + type).catch(function(){});
+        }).catch(function(err){ console.warn('Total views not counted (check Firebase rules for visitors/total):', err && err.message); });
       }
     }
     /* live presence: removed automatically when the browser closes the page */
@@ -3502,17 +3514,26 @@ const StoreFront = (function(){
     resetScroll();
   }
 
-  /* Delivery charge by location: district "Dhaka" = inside Dhaka, everything else = outside.
-     Values come from Admin > Settings. Before a district is chosen, the inside-Dhaka rate is shown. */
+  /* Delivery charge by zone (values come from Admin > Settings):
+       "Dhaka"           = Inside Dhaka   (default 70)
+       "Dhaka Sub-urban" = Dhaka Sub-urban (default 100)
+       any other district = Outside Dhaka (default 120)
+     Before a district is chosen, the inside-Dhaka rate is shown. */
+  function deliveryZone(district){
+    return district === 'Dhaka' ? 'inside' : (district === 'Dhaka Sub-urban' ? 'suburban' : 'outside');
+  }
   function getDeliveryCharge(settings){
     settings = settings || SettingsService.getSettings();
     const num = (v, fb)=> (v === undefined || v === null || v === '' || isNaN(Number(v))) ? fb : Number(v);
-    const inside = num(settings.deliveryInside, num(settings.delivery, 60));
-    const outside = num(settings.deliveryOutside, 120);
+    const rates = {
+      inside: num(settings.deliveryInside, num(settings.delivery, 70)),
+      suburban: num(settings.deliverySuburban, 100),
+      outside: num(settings.deliveryOutside, 120)
+    };
     const dEl = document.getElementById('chk-district');
     const district = dEl ? dEl.value : '';
-    if(!district) return inside;
-    return district === 'Dhaka' ? inside : outside;
+    if(!district) return rates.inside;
+    return rates[deliveryZone(district)];
   }
 
   function updateCheckoutTotals(){
@@ -3547,7 +3568,7 @@ const StoreFront = (function(){
     const zoneEl = document.getElementById('chk-delivery-zone');
     if(zoneEl){
       const dv = document.getElementById('chk-district').value;
-      zoneEl.textContent = !dv ? '' : (dv === 'Dhaka' ? '(Inside Dhaka)' : '(Outside Dhaka)');
+      zoneEl.textContent = !dv ? '' : ({ inside:'(Inside Dhaka)', suburban:'(Dhaka Sub-urban)', outside:'(Outside Dhaka)' })[deliveryZone(dv)];
     }
     document.getElementById('chk-tax').textContent = fmtMoney(taxAmt);
     document.getElementById('chk-total').textContent = fmtMoney(total);
@@ -4075,7 +4096,7 @@ const StoreFront = (function(){
     'Please select a size for every item before placing your order':'অর্ডারের আগে প্রতিটি পণ্যের সাইজ বাছাই করুন',
     'Could not place your order. Please check your connection and try again.':'অর্ডার করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।',
     'No more stock available':'আর স্টক নেই','bKash number copied':'বিকাশ নম্বর কপি হয়েছে','Tracking ID copied':'ট্র্যাকিং আইডি কপি হয়েছে',
-    'Add to Cart':'কার্টে যোগ করুন','Shop Smart. Order Easily.':'সহজে কিনুন, নিশ্চিন্তে অর্ডার করুন।','Pick your favourite products and get them delivered to your door.':'পছন্দের পণ্য বেছে নিন, দরজায় পৌঁছে যাবে।','Search products':'পণ্য খুঁজুন','All':'সব','Quick Links':'দ্রুত লিংক','Home':'হোম','Quality products, easy ordering.':'মানসম্মত পণ্য, সহজ অর্ডার।','View Cart':'কার্ট দেখুন','Added to cart':'কার্টে যোগ হয়েছে','← Continue Shopping':'← কেনাকাটা চালিয়ে যান',
+    'Add to Cart':'কার্টে যোগ করুন','(Inside Dhaka)':'(ঢাকার ভেতরে)','(Dhaka Sub-urban)':'(ঢাকা শহরতলী)','(Outside Dhaka)':'(ঢাকার বাইরে)','Shop Smart. Order Easily.':'সহজে কিনুন, নিশ্চিন্তে অর্ডার করুন।','Pick your favourite products and get them delivered to your door.':'পছন্দের পণ্য বেছে নিন, দরজায় পৌঁছে যাবে।','Search products':'পণ্য খুঁজুন','All':'সব','Quick Links':'দ্রুত লিংক','Home':'হোম','Quality products, easy ordering.':'মানসম্মত পণ্য, সহজ অর্ডার।','View Cart':'কার্ট দেখুন','Added to cart':'কার্টে যোগ হয়েছে','← Continue Shopping':'← কেনাকাটা চালিয়ে যান',
     'Please select a design for every item':'প্রতিটি পণ্যের ডিজাইন বাছাই করুন','Some cart items were updated because of stock changes':'স্টক পরিবর্তনের কারণে কার্টের কিছু পণ্য আপডেট হয়েছে',
     'Cart is empty':'কার্ট খালি','Cart':'কার্ট','Billing':'বিলিং','Your Cart':'আপনার কার্ট','Order Summary':'অর্ডার সারসংক্ষেপ','Remove':'মুছুন',
     'Add a product to continue.':'এগিয়ে যেতে একটি পণ্য যোগ করুন।','Estimated Total':'আনুমানিক মোট',
