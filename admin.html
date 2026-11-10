@@ -272,6 +272,8 @@ a{color:inherit;text-decoration:none;}
 .stat-change.down{color:var(--danger);}
 .stat-change.flat{color:var(--text-secondary);}
 
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22C55E;margin-right:6px;animation:livePulse 1.4s infinite;}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55);}70%{box-shadow:0 0 0 7px rgba(34,197,94,0);}100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}}
 .vis-tab{padding:6px 12px;border:none;background:transparent;border-radius:6px;font-size:12.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;}
 .vis-tab.active{background:var(--white);color:var(--primary);box-shadow:var(--shadow-sm);}
 .vis-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;font-size:12.5px;font-weight:600;background:var(--bg);}
@@ -1169,7 +1171,7 @@ table.compact-table td.col-actions .row-actions{justify-content:flex-end;}
 
         <div class="card" style="margin-bottom:20px;">
           <div class="card-header">
-            <h3>Website Visitors</h3>
+            <h3>Website Views <span style="font-size:12px;font-weight:500;color:var(--text-secondary);">(new browsers per day)</span></h3>
             <div class="chart-tabs" id="vis-tabs">
               <button class="vis-tab" data-range="7">7 Days</button>
               <button class="vis-tab active" data-range="14">14 Days</button>
@@ -2353,17 +2355,10 @@ function renderDashboard(){
     { title:'Total Sales', value: fmtMoney(totalSales), icon:'fa-sack-dollar', color:'#15803D', bg:'var(--success-bg)', change:'Across all orders', dir:'up' },
   ];
 
-  /* Website visitors: one count per device per day, written by the storefront */
-  const vs = DataService.get('visitors', {}) || {};
-  const vDaily = vs.daily || {}, vTypes = vs.types || {};
-  const totalVis = Object.keys(vDaily).reduce((n,k)=> n + (Number(vDaily[k]) || 0), 0);
-  const todayVis = Number(vDaily[visDayKey(new Date())]) || 0;
-  const yDate = new Date(); yDate.setDate(yDate.getDate() - 1);
-  const yestVis = Number(vDaily[visDayKey(yDate)]) || 0;
-  const vDiff = todayVis - yestVis;
+  /* Website views: (1) Live Now = browsers online right now, (2) Total Views = one count per browser */
   stats.push(
-    { title:'Total Visitors', value: totalVis, icon:'fa-eye', color:'#0369A1', bg:'#E0F2FE', change: (Number(vTypes.mobile)||0) + ' mobile · ' + (Number(vTypes.desktop)||0) + ' desktop', dir:'flat' },
-    { title:"Today's Visitors", value: todayVis, icon:'fa-chart-line', color:'#0F766E', bg:'#CCFBF1', change: vDiff === 0 ? 'Same as yesterday' : (vDiff > 0 ? '+' : '') + vDiff + ' vs yesterday', dir: vDiff > 0 ? 'up' : (vDiff < 0 ? 'down' : 'flat') }
+    { id:'stat-live', title:'<span class="live-dot"></span>Live Now', value: liveVisitorCount(), icon:'fa-tower-broadcast', color:'#15803D', bg:'var(--success-bg)', change:'Browsers on the website right now', dir:'up' },
+    { id:'stat-total-views', title:'Total Views', value: totalViewCount(), icon:'fa-eye', color:'#0369A1', bg:'#E0F2FE', change:'One count per browser', dir:'flat' }
   );
 
   document.getElementById('stats-grid').innerHTML = stats.map(s=>`
@@ -2374,7 +2369,7 @@ function renderDashboard(){
         </div>
         <div class="stat-icon" style="background:${s.bg};color:${s.color};"><i class="fa-solid ${s.icon}"></i></div>
       </div>
-      <div class="stat-value">${s.value}</div>
+      <div class="stat-value"${s.id ? ' id="' + s.id + '"' : ''}>${s.value}</div>
       <div class="stat-change ${s.dir}"><i class="fa-solid ${s.dir==='up'?'fa-arrow-up':s.dir==='down'?'fa-arrow-down':'fa-minus'}"></i> ${s.change}</div>
     </div>
   `).join('');
@@ -2518,7 +2513,33 @@ function renderSalesChart(days, orders){
   });
 }
 
-/* ---------- Website visitors graph ---------- */
+/* ---------- Website views: live + total ---------- */
+function liveVisitorCount(){
+  const live = ((DataService.get('visitors', {}) || {}).live) || {};
+  const now = Date.now(), seen = {};
+  Object.keys(live).forEach(k=>{
+    const e = live[k];
+    if(e && e.v && now - Number(e.t) < 180000) seen[e.v] = 1;   /* active in the last 3 minutes; tabs of one browser count once */
+  });
+  return Object.keys(seen).length;
+}
+function totalViewCount(){
+  const vs = DataService.get('visitors', {}) || {};
+  if(vs.total !== undefined && vs.total !== null) return Number(vs.total) || 0;
+  const d = vs.daily || {};
+  return Object.keys(d).reduce((n,k)=> n + (Number(d[k]) || 0), 0);
+}
+let lastVisSig = '';
+function updateVisitorStats(){
+  const l = document.getElementById('stat-live'); if(l) l.textContent = liveVisitorCount();
+  const t = document.getElementById('stat-total-views'); if(t) t.textContent = totalViewCount();
+  const vs = DataService.get('visitors', {}) || {};
+  const sig = JSON.stringify(vs.daily || {}) + JSON.stringify(vs.types || {});
+  if(sig !== lastVisSig) renderVisitorsChart(visRange);
+}
+setInterval(()=>{ if(typeof currentAdminPage !== 'undefined' && currentAdminPage === 'dashboard') updateVisitorStats(); }, 30000);
+
+/* ---------- Website views graph ---------- */
 let visRange = 14;
 let visitorsChart = null;
 function visDayKey(d){
@@ -2530,6 +2551,7 @@ function renderVisitorsChart(days){
   if(!canvas) return;
   const vs = DataService.get('visitors', {}) || {};
   const daily = vs.daily || {}, types = vs.types || {};
+  lastVisSig = JSON.stringify(daily) + JSON.stringify(types);
   const labels = [], data = [];
   for(let i = days - 1; i >= 0; i--){
     const d = new Date(); d.setDate(d.getDate() - i);
@@ -2543,7 +2565,7 @@ function renderVisitorsChart(days){
   if(visitorsChart) visitorsChart.destroy();
   visitorsChart = new Chart(canvas.getContext('2d'), {
     type:'bar',
-    data:{ labels, datasets:[{ label:'Visitors', data, backgroundColor:'rgba(37,99,235,0.85)', borderRadius:6, maxBarThickness:28 }] },
+    data:{ labels, datasets:[{ label:'New views', data, backgroundColor:'rgba(37,99,235,0.85)', borderRadius:6, maxBarThickness:28 }] },
     options:{
       responsive:true,
       plugins:{ legend:{ display:false } },
@@ -3595,7 +3617,7 @@ function enterApp(){
   NotificationService.startPolling();
 
   DataService.onRemoteUpdate = function(key){
-    if(key === 'visitors'){ if(currentAdminPage === 'dashboard') renderDashboard(); return; }
+    if(key === 'visitors'){ if(currentAdminPage === 'dashboard') updateVisitorStats(); return; }
     if(key === 'orders'){
       if(currentAdminPage === 'orders') renderOrders();
       if(currentAdminPage === 'dashboard') renderDashboard();
